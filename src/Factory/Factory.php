@@ -23,6 +23,13 @@ class Factory
 
     public function createBatch(array $operations)
     {
+        //check if operations is well formatted ( it must have a type in each "row")
+        foreach ($operations as $operation) {
+            if (! array_key_exists('type', $operation)) {
+                throw new \Exception('all rows must have a "type" key');
+            }
+        }
+
         $batch = new Batch();
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setOperations($operations);
