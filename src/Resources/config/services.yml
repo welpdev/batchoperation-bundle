@@ -1,7 +1,4 @@
 services:
-    welp_ical.factory:
+    welp_batch.factory:
         class: Welp\BatchBundle\Factory\Factory
-        arguments : ['doctrine.orm.entity_manager']
-        calls:
-            - [ setTimezone, ['%welp_ical.default_timezone%']]
-            - [ setProdid, ['%welp_ical.default_prodid%']]
+        arguments : ['@doctrine.orm.entity_manager']

@@ -15,11 +15,14 @@ class Factory
     public function __construct($entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->batchRepository = $this->entityManager->getRepository('Batch');
+        $this->batchRepository = $this->entityManager->getRepository(Batch::class);
     }
 
     public function createBatch(array $operations)
     {
+        // TODO check operations array to see if it fits the model
+
+
         $batch = new Batch();
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setOperations($operations);
