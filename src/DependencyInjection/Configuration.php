@@ -1,6 +1,6 @@
 <?php
 
-namespace Welp\IcalBundle\DependencyInjection;
+namespace Welp\BatchBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

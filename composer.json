@@ -1,5 +1,5 @@
 {
-    "name": "welp/batchOperation-bundle",
+    "name": "welp/batch-operation-bundle",
     "description": "Symfony Bundle to batch Operation",
     "version": "0.0.1",
     "type": "symfony-bundle",
