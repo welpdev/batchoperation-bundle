@@ -37,6 +37,6 @@ class WelpBatchExtension extends Extension
      */
     public function getAlias()
     {
-        return 'welp_ical';
+        return 'welp_batch';
     }
 }
