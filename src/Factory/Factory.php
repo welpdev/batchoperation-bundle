@@ -15,7 +15,7 @@ class Factory
     public function __construct($entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->batchRepository = $this->entityManager->getRepository('Batch') = $batchRepository;
+        $this->batchRepository = $this->entityManager->getRepository('Batch');
     }
 
     public function createBatch(array $operations)
