@@ -22,8 +22,8 @@ class WelpBatchExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('welp_batch.rabbitmq_connection_name', $config['rabbitmq_connection_name']);
-        $container->setParameter('welp_batch.rabbitmq_producer_name', $config['rabbitmq_producer_name']);
+        $container->setParameter('welp_batch.rabbitmq_producer_service_name', $config['rabbitmq_producer_service_name']);
+        $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

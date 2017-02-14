@@ -10,7 +10,7 @@ use JMS\Serializer\Annotation as Serializer;
  * Thread
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Repository\BatchRepository");
+ * @ORM\Entity();
  * @Serializer\ExclusionPolicy("all")
  */
 class Batch

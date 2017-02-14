@@ -25,8 +25,8 @@ class Configuration implements ConfigurationInterface
         // more information on that topic.
 
         $rootNode->children()
-            ->scalarNode('rabbitmq_connection_name')->defaultValue('default')->end()
-            ->scalarNode('rabbitmq_producer_name')->defaultValue('batch_operation_queue')->end();
+            ->scalarNode('rabbitmq_producer_service_name')->defaultValue('')->end()
+            ->scalarNode('rabbitmq_producer_routing_keys')->defaultValue('')->end();
 
         return $treeBuilder;
     }

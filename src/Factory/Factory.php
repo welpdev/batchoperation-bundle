@@ -11,24 +11,27 @@ class Factory
 {
     private $entityManager;
     private $batchRepository;
+    private $container;
+    private $rmqProducer;
 
-    public function __construct($entityManager)
+    public function __construct($entityManager, $container)
     {
         $this->entityManager = $entityManager;
         $this->batchRepository = $this->entityManager->getRepository(Batch::class);
+        $this->container = $container;
     }
 
     public function createBatch(array $operations)
     {
-        // TODO check operations array to see if it fits the model
-
-
         $batch = new Batch();
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setOperations($operations);
 
         $this->entityManager->persist($batch);
         $this->entityManager->flush();
+
+        //produce the operations to rmq TODO add batchid to let consumer update batch status
+        $this->container->get('welp_batch.producer')->produceToRmq($operations);
 
         return $batch;
     }
