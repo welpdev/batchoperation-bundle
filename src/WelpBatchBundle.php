@@ -2,7 +2,7 @@
 
 namespace Welp\BatchBundle;
 
-use Welp\IcalBundle\DependencyInjection\WelpBatchExtension;
+use Welp\BatchBundle\DependencyInjection\WelpBatchExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
