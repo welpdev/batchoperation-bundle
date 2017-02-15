@@ -51,6 +51,30 @@ class Batch
     protected $operations;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="total_operations", type="integer")
+     * @Serializer\Expose
+     */
+    protected $totalOperations;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="total_executed_operations", type="integer")
+     * @Serializer\Expose
+     */
+    protected $totalExecutedOperations  ;
+
+    /**
+     * @var Errors[]
+     *
+     * @ORM\Column(name="errors", type="array")
+     * @Serializer\Expose
+     */
+    protected $errors;
+
+    /**
      * @return int
      */
     public function getId()
@@ -105,5 +129,67 @@ class Batch
     {
         $this->operations = $operations;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalOperations()
+    {
+        return $this->totalOperations;
+    }
+
+    /**
+     * @param int $totalOperations
+     *
+     * @return static
+     */
+    public function setTotalOperations($totalOperations)
+    {
+        $this->totalOperations = $totalOperations;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalExecutedOperations()
+    {
+        return $this->totalExecutedOperations;
+    }
+
+    /**
+     * @param int $totalOperations
+     *
+     * @return static
+     */
+    public function setTotalExecutedOperations($totalExecutedOperations)
+    {
+        $this->totalExecutedOperations = $totalExecutedOperations;
+        return $this;
+    }
+
+    /**
+     * @return Errors[]
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @param Operation[] $operations
+     *
+     * @return static
+     */
+    public function setErrors(array $errors)
+    {
+        $this->errors = $errors;
+        return $this;
+    }
+
+    public function addError(array $error)
+    {
+        $this->errors[] = $error;
     }
 }

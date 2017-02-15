@@ -33,6 +33,8 @@ class Factory
         $batch = new Batch();
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setOperations($operations);
+        $batch->setTotalOperations(count($operations));
+        $batch->setTotalExecutedOperations(0);
 
         $this->entityManager->persist($batch);
         $this->entityManager->flush();
@@ -50,12 +52,25 @@ class Factory
         return $batch;
     }
 
-    public function updateBatchStatus($id)
+    public function updateBatch($id, $errors)
     {
         $batch = $this->batchRepository->findOneById($id);
 
-        //TODO active or finished
-        $batch->setStatus(Batch::STATUS_ACTIVE);
+        $totalOperations = $batch->getTotalOperations();
+        $totalExecutedOperations = $batch->getTotalExecutedOperations();
+
+        $totalExecutedOperations+=1;
+        $batch->setTotalExecutedOperations($totalExecutedOperations);
+        if (count($errors)>0) {
+            $errors['id_operation']= $totalExecutedOperations;
+            $batch->addError($errors);
+        }
+
+        if ($totalOperations <= $totalExecutedOperations) {
+            $batch->setStatus(Batch::STATUS_FINISHED);
+        } else {
+            $batch->setStatus(Batch::STATUS_ACTIVE);
+        }
 
         $this->entityManager->persist($batch);
         $this->entityManager->flush();
