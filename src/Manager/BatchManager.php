@@ -1,13 +1,14 @@
 <?php
 
-namespace Welp\BatchBundle\Factory;
+namespace Welp\BatchBundle\Manager;
 
-use Welp\BatchBundle\Entity\Batch;
+use Welp\BatchBundle\Model\Batch;
+use Welp\BatchBundle\Manager\BatchManagerInterface as BaseBatchManager;
 
 /**
  * batch Factory
  */
-class Factory
+class BatchManager implements BaseBatchManager
 {
     private $entityManager;
     private $batchRepository;
@@ -21,7 +22,10 @@ class Factory
         $this->container = $container;
     }
 
-    public function createBatch(array $operations)
+    /**
+     * {@inheritdoc}
+     */
+    public function create(array $operations)
     {
         //check if operations is well formatted ( it must have a type in each "row")
         foreach ($operations as $operation) {
@@ -45,14 +49,20 @@ class Factory
         return $batch;
     }
 
-    public function getBatch($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function get($id)
     {
         $batch = $this->batchRepository->findOneById($id);
 
         return $batch;
     }
 
-    public function updateBatch($id, $errors)
+    /**
+     * {@inheritdoc}
+     */
+    public function update($id, $errors)
     {
         $batch = $this->batchRepository->findOneById($id);
 
@@ -76,7 +86,10 @@ class Factory
         $this->entityManager->flush();
     }
 
-    public function deleteBatch($id)
+    /**
+     * {@inheritdoc}
+     */
+    public function delete($id)
     {
         $batch = $this->batchRepository->findOneById($id);
         $this->entityManager->remove($batch);
