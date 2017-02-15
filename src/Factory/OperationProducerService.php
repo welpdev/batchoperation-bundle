@@ -23,7 +23,6 @@ class OperationProducerService
         foreach ($operations as $operation) {
             $operation['batchId']=$batchId;
             $sMsg = serialize($operation);
-            dump($this->container->getParameter('welp_batch.rabbitmq_producer_routing_keys'));
             $this->rmqProducer->publish($sMsg, $this->container->getParameter('welp_batch.rabbitmq_producer_routing_keys'));
         }
     }
