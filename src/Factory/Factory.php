@@ -37,8 +37,8 @@ class Factory
         $this->entityManager->persist($batch);
         $this->entityManager->flush();
 
-        //produce the operations to rmq TODO add batchid to let consumer update batch status
-        $this->container->get('welp_batch.producer')->produceToRmq($operations);
+        //produce the operations to rmq
+        $this->container->get('welp_batch.producer')->produceToRmq($operations, $batch->getId());
 
         return $batch;
     }
@@ -50,9 +50,12 @@ class Factory
         return $batch;
     }
 
-    public function updateBatchStatus($status)
+    public function updateBatchStatus($id)
     {
-        $batch->setStatus($status);
+        $batch = $this->batchRepository->findOneById($id);
+
+        //TODO active or finished
+        $batch->setStatus(Batch::STATUS_ACTIVE);
 
         $this->entityManager->persist($batch);
         $this->entityManager->flush();

@@ -6,10 +6,10 @@
     "homepage": "https://github.com/welpdev/batchoperation-bundle",
     "license": "MIT",
     "keywords": [
-        "Symfony",
-        "batch",
-        "batchOperation",
-        "welp"
+        "symfony-bundle",
+        "symfony",
+        "php",
+        "bundle"
     ],
     "authors": [
         {
