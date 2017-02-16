@@ -39,21 +39,28 @@ class BatchProvider
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setTotalOperations(count($operations));
         $batch->setTotalExecutedOperations(0);
+        $this->batchManager->create($batch);
 
         foreach ($operations as $ope) {
             $operation = $this->operationManager->createNew();
             $operation->setType($ope['type']);
             $operation->setStatus(Operation::STATUS_PENDING);
+
+            $type = $ope['type'];
+            $action = $ope['action'];
+
             unset($ope['type']);
             $operation->setPayload($ope);
             $operation->setBatch($batch);
             $batch->addOperations($operation);
+            $this->container->get('welp_batch.producer')->produce($ope, $batch->getId(), $type, $action);
         }
 
-        $this->batchManager->create($batch);
+        $this->batchManager->update($batch);
+
 
         //produce the operations to rmq
-        //$this->container->get('welp_batch.producer')->produceToRmq($operations, $batch->getId());
+
 
         return $batch;
     }

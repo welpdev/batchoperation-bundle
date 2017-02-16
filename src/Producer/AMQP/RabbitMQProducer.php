@@ -1,11 +1,13 @@
 <?php
 
-namespace Welp\BatchBundle\Producer;
+namespace Welp\BatchBundle\Producer\AMQP;
+
+use Welp\BatchBundle\Producer\ProducerInterface as BaseProducer;
 
 /**
  *
  */
-class RabbitMQProducer implements ProducerInterface
+class RabbitMQProducer implements BaseProducer
 {
     private $container;
 
@@ -14,16 +16,16 @@ class RabbitMQProducer implements ProducerInterface
         $this->container = $container;
     }
 
-    public function produce($operation, $batchId, $type, $action)
+    public function produce(array $operation, $batchId, $type, $action)
     {
         $serviceName = $this->selectQueue($type, $action);
 
         $operation['batchId']=$batchId;
         $sMsg = serialize($operation);
-        $this->container->get($serviceName)->publish($sMsg);
+        $this->container->get($serviceName)->publish($sMsg, 'welp.batch.'.$type);
     }
 
-    private function selectQueue($entity, $action)
+    public function selectQueue($entity, $action)
     {
         $serviceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$entity);
         return $serviceName;

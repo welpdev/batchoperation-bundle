@@ -67,11 +67,11 @@ class WelpBatchExtension extends Extension
             $definition->addTag('old_sound_rabbit_mq.producer');
             $definition->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys(array(
                 'name' => 'welp.batch.'.$key,
-                'direct'=> true
+                'type'=> 'direct'
             ))));
             $definition->addMethodCall('setQueueOptions', array(array(
-                'name' => 'welp.batch'.$key, // add action to this name
-                'routing_keys' => ['welp.batch'.$key] // add action to this name
+                'name' => 'welp.batch.'.$key, // add action to this name
+                'routing_keys' => ['welp.batch.'.$key] // add action to this name
             )));
             $definition->addArgument(new Reference(sprintf('old_sound_rabbit_mq.connection.%s', $connectionName)));
             $definition->addMethodCall('disableAutoSetupFabric');
