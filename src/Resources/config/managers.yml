@@ -1,10 +1,10 @@
 services:
     welp_batch.operation_manager:
         class: Welp\BatchBundle\Manager\OperationManager
-        arguments : ['@%welp_batch.entity_manager%', '@service_container', %welp_batch.batch_entity.batch%]
+        arguments : ['%welp_batch.entity_manager%', '@service_container', %welp_batch.batch_entity.operation%]
     welp_batch.batch_manager:
         class: Welp\BatchBundle\Manager\BatchManager
-        arguments : ['@%welp_batch.entity_manager%', '@service_container', %welp_batch.batch_entity.operation%]
+        arguments : ['%welp_batch.entity_manager%', '@service_container', %welp_batch.batch_entity.batch%]
     welp_batch.batch_provider:
-        class: Welp\BatchBundle\Manager\BatchManager
-        arguments : ['@%welp_batch.entity_manager%', '@service_container', @welp_batch.batch_manager,@welp_batch.operation_manager ]
+        class: Welp\BatchBundle\Provider\BatchProvider
+        arguments : ['%welp_batch.entity_manager%', '@service_container', '@welp_batch.batch_manager','@welp_batch.operation_manager' ]

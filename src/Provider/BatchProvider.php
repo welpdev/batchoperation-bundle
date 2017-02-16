@@ -12,11 +12,12 @@ class BatchProvider
     private $entityManager;
     private $container;
     private $operationManager;
+    private $batchManager;
 
     public function __construct($entityManager, $container, $batchManager, $operationManager)
     {
-        $this->entityManager = $entityManager;
         $this->container = $container;
+        $this->entityManager = $this->container->get($entityManager);
         $this->operationManager = $operationManager;
         $this->batchManager = $batchManager;
     }
@@ -35,10 +36,9 @@ class BatchProvider
 
         $batch = $this->batchManager->createNew();
         $batch->setStatus(Batch::STATUS_PENDING);
-        $batch->setOperations($operations);
+        //$batch->setOperations($operations);
         $batch->setTotalOperations(count($operations));
         $batch->setTotalExecutedOperations(0);
-
         $this->batchManager->create($batch);
 
         //produce the operations to rmq

@@ -17,12 +17,12 @@ class OperationManager implements BaseManager
 
     public function __construct($entityManager, $container, $className)
     {
-        $this->entityManager = $entityManager;
         $this->container = $container;
-        $this->repository = $this->container->getRepository($className);
+        $this->entityManager = $this->container->get($entityManager);
+        $this->repository = $this->entityManager->getRepository($className);
 
-        $metadata = $entityManager->getClassMetadata($className);
-        $this->class = $metadata->getName();
+        //$metadata = $this->entityManager->getClassMetadata($className);
+        $this->class = $className;
     }
 
     public function createNew()
