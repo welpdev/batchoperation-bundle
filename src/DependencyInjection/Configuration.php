@@ -26,7 +26,25 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->scalarNode('rabbitmq_producer_service_name')->defaultValue('')->end()
-            ->scalarNode('rabbitmq_producer_routing_keys')->defaultValue('')->end();
+            ->scalarNode('rabbitmq_producer_routing_keys')->defaultValue('')->end()
+            ->scalarNode('entity_manager')->defaultNull()->end()
+            ->arrayNode('batch_entity')
+                ->children()
+                    ->scalarNode('batch')->defaultValue('')->end()
+                    ->scalarNode('operation')->defaultValue('')->end()
+                ->end()
+            ->end()
+            ->arrayNode('manage_entities')
+                ->useAttributeAsKey('name')
+                ->prototype('array')
+                    ->children()
+                        ->scalarNode('entity_name')->defaultValue('')->end()
+                        ->scalarNode('form_name')->defaultValue('')->end()
+                        ->scalarNode('queue_name')->defaultValue('')->end()
+                    ->end()
+                ->end()
+            ->end();
+
 
         return $treeBuilder;
     }
