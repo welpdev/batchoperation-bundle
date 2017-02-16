@@ -3,23 +3,43 @@
 namespace Welp\BatchBundle\Manager;
 
 use Welp\BatchBundle\Model\Batch;
-use Welp\BatchBundle\Manager\OperationManagerInterface as BaseOperationManager;
+use Welp\BatchBundle\Manager\ManagerInterface as BaseManager;
 
 /**
  * operation Factory
  */
-class OperationManager implements BaseOperationManager
+class OperationManager implements BaseManager
 {
-    public function __construct()
+    private $entityManager;
+    private $container;
+    private $repository;
+    private $class;
+
+    public function __construct($entityManager, $container, $className)
     {
+        $this->entityManager = $entityManager;
+        $this->container = $container;
+        $this->repository = $this->container->getRepository($className);
+
+        $metadata = $entityManager->getClassMetadata($className);
+        $this->class = $metadata->getName();
+    }
+
+    public function createNew()
+    {
+        $batch = new $this->class();
+        return $batch;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function create(array $operations)
+    public function create($entity)
     {
-        return null;
+        $this->entityManager->persist($batch);
+        $this->entityManager->flush();
+
+        return $batch;
     }
 
     /**
@@ -27,22 +47,26 @@ class OperationManager implements BaseOperationManager
      */
     public function get($id)
     {
-        return null;
+        $batch = $this->batchRepository->findOneById($id);
+
+        return $batch;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function update($id, $errors)
+    public function update($entity)
     {
-        return null;
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function delete($id)
+    public function delete($entity)
     {
-        return null;
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
     }
 }

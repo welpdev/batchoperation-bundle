@@ -11,7 +11,7 @@ interface ProducerInterface
      * publish an operation to the broker
      * @param  array  $operations
      */
-    public function produce(array $operations);
+    public function produce(array $operations, $batchId, $type, $action);
 
     /**
      * Select th right queue to use

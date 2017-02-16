@@ -7,34 +7,40 @@ use Welp\BatchBundle\Model\Batch;
 /**
  * batch Factory
  */
-interface BatchManagerInterface
+interface ManagerInterface
 {
     /**
-     * Create a new batch with the given operations
+     * Create a new entity
      * @param  array  $operations
      * @return Batch
      */
-    public function create(array $operations);
+    public function createNew();
 
     /**
-     * Get a batch with the given id
+     * save a new entity
+     * @param  array  $operations
+     * @return Batch
+     */
+    public function create($entity);
+
+    /**
+     * get an entity
      * @param  int $id
      * @return Batch
      */
-    public function get($id);
+    public function get($entity);
 
     /**
-     * Update a batch with tthe given ID
+     * update an entity
      * @param  int $id
-     * @param  array $errors
      * @return Batch
      */
-    public function update($id, $errors);
+    public function update($id);
 
     /**
      * Delete a batch with the given ID
      * @param  int $id
-     * @return boolean
+     * @return bool
      */
     public function delete($id);
 }
