@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface
         $rootNode->children()
             ->scalarNode('entity_manager')->defaultNull()->end()
             ->enumNode('broker_type')->values(array('rabbitmq','redis'))->defaultValue('rabbitmq')->end()
+            ->scalarNode('broker_connection')->defaultValue('')->end()
             ->arrayNode('batch_entity')
                 ->children()
                     ->scalarNode('batch')->defaultValue('')->end()

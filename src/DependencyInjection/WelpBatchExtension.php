@@ -2,8 +2,10 @@
 
 namespace Welp\BatchBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -14,11 +16,13 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class WelpBatchExtension extends Extension
 {
+    private $container;
     /**
      * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $this->container = $container;
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
@@ -31,12 +35,16 @@ class WelpBatchExtension extends Extension
         $container->setAlias('welp_batch.broker_type', $config['broker_type']);
         $container->setAlias('welp_batch.batch_entity.batch', $config['batch_entity']['batch']);
         $container->setAlias('welp_batch.batch_entity.operation', $config['batch_entity']['operation']);
-        $container->setAlias('welp_batch.manage_entities', $config['manage_entities']);
+        $container->setAlias('welp_batch.broker_connection', $config['broker_connection']);
 
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load($config['broker_type'].'.yml');
         $loader->load('managers.yml');
+
+        if ($config['broker_type'] == 'rabbitmq') {
+            $this->loadRMQProducerDynamically($config['manage_entities'], $config['broker_connection']);
+        }
     }
 
 
@@ -48,5 +56,55 @@ class WelpBatchExtension extends Extension
     public function getAlias()
     {
         return 'welp_batch';
+    }
+
+    public function loadRMQProducerDynamically(array $managedEntity, $connectionName)
+    {
+        //TODO add action type ( create, delete)
+        foreach ($managedEntity as $key => $entity) { // for each entity, we create a new producer
+            $definition = new Definition('OldSound\RabbitMqBundle\RabbitMq\Producer');
+            $definition->addTag('old_sound_rabbit_mq.base_amqp');
+            $definition->addTag('old_sound_rabbit_mq.producer');
+            $definition->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys(array(
+                'name' => 'welp.batch.'.$key,
+                'direct'=> true
+            ))));
+            $definition->addMethodCall('setQueueOptions', array(array(
+                'name' => 'welp.batch'.$key, // add action to this name
+                'routing_keys' => ['welp.batch'.$key] // add action to this name
+            )));
+            $definition->addArgument(new Reference(sprintf('old_sound_rabbit_mq.connection.%s', $connectionName)));
+            $definition->addMethodCall('disableAutoSetupFabric');
+            $producerServiceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$key);
+            $this->container->setDefinition($producerServiceName, $definition);
+        }
+    }
+
+    /**
+     * Symfony 2 converts '-' to '_' when defined in the configuration. This leads to problems when using x-ha-policy
+     * parameter. So we revert the change for right configurations.
+     *
+     * @param array $config
+     *
+     * @return array
+     */
+    private function normalizeArgumentKeys(array $config)
+    {
+        if (isset($config['arguments'])) {
+            $arguments = $config['arguments'];
+            // support for old configuration
+            if (is_string($arguments)) {
+                $arguments = $this->argumentsStringAsArray($arguments);
+            }
+            $newArguments = array();
+            foreach ($arguments as $key => $value) {
+                if (strstr($key, '_')) {
+                    $key = str_replace('_', '-', $key);
+                }
+                $newArguments[$key] = $value;
+            }
+            $config['arguments'] = $newArguments;
+        }
+        return $config;
     }
 }
