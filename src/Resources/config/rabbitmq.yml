@@ -1,0 +1,4 @@
+services:
+    welp_batch.producer:
+        class: Welp\BatchBundle\Factory\OperationProducerService
+        arguments : ['@service_container']

@@ -22,11 +22,21 @@ class WelpBatchExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('welp_batch.rabbitmq_producer_service_name', $config['rabbitmq_producer_service_name']);
+        /*$container->setParameter('welp_batch.rabbitmq_producer_service_name', $config['rabbitmq_producer_service_name']);
         $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);
+        $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);
+        $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);*/
+
+        $container->setAlias('welp_batch.entity_manager', $config['entity_manager']);
+        $container->setAlias('welp_batch.broker_type', $config['broker_type']);
+        $container->setAlias('welp_batch.batch_entity.batch', $config['batch_entity']['batch']);
+        $container->setAlias('welp_batch.batch_entity.operation', $config['batch_entity']['operation']);
+        $container->setAlias('welp_batch.manage_entities', $config['manage_entities']);
+
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        $loader->load($config['broker_type'].'.yml');
+        $loader->load('managers.yml');
     }
 
 

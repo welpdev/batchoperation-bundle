@@ -1,7 +1,0 @@
-services:
-    welp_batch.factory:
-        class: Welp\BatchBundle\Factory\Factory
-        arguments : ['@doctrine.orm.entity_manager', '@service_container']
-    welp_batch.producer:
-        class: Welp\BatchBundle\Factory\OperationProducerService
-        arguments : ['@service_container', '%welp_batch.rabbitmq_producer_service_name%']

@@ -1,0 +1,4 @@
+services:
+    welp_batch.factory:
+        class: Welp\BatchBundle\Factory\Factory
+        arguments : ['@doctrine.orm.entity_manager', '@service_container']
