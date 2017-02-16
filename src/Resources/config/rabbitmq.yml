@@ -1,4 +1,4 @@
 services:
     welp_batch.producer:
-        class: Welp\BatchBundle\Factory\OperationProducerService
+        class: Welp\BatchBundle\Producer\RabbitMQProducer
         arguments : ['@service_container']

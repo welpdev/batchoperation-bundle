@@ -1,11 +1,11 @@
 <?php
 
-namespace Welp\BatchBundle\Adapter;
+namespace Welp\BatchBundle\Producer;
 
 /**
  * batch Factory
  */
-interface AdpaterInterface
+interface ProducerInterface
 {
     /**
      * publish an operation to the broker
