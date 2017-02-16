@@ -3,6 +3,7 @@
 namespace Welp\BatchBundle\Provider;
 
 use Welp\BatchBundle\Model\Batch;
+use Welp\BatchBundle\Model\Operation;
 
 /**
  * batch Factory
@@ -36,9 +37,19 @@ class BatchProvider
 
         $batch = $this->batchManager->createNew();
         $batch->setStatus(Batch::STATUS_PENDING);
-        //$batch->setOperations($operations);
         $batch->setTotalOperations(count($operations));
         $batch->setTotalExecutedOperations(0);
+
+        foreach ($operations as $ope) {
+            $operation = $this->operationManager->createNew();
+            $operation->setType($ope['type']);
+            $operation->setStatus(Operation::STATUS_PENDING);
+            unset($ope['type']);
+            $operation->setPayload($ope);
+            $operation->setBatch($batch);
+            $batch->addOperations($operation);
+        }
+
         $this->batchManager->create($batch);
 
         //produce the operations to rmq

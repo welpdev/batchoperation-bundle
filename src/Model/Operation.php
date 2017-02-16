@@ -35,6 +35,8 @@ abstract class Operation implements OperationInterface
      */
     protected $errors;
 
+    protected $batch;
+
     /**
      * @return int
      */
@@ -128,5 +130,15 @@ abstract class Operation implements OperationInterface
     public function addError(array $error)
     {
         $this->errors[] = $error;
+    }
+
+    public function getBatch()
+    {
+        return $this->batch;
+    }
+
+    public function setBatch($batch)
+    {
+        $this->batch = $batch;
     }
 }

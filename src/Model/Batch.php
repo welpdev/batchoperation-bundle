@@ -91,6 +91,12 @@ abstract class Batch implements BatchInterface
         return $this;
     }
 
+    public function addOperations($operation)
+    {
+        $this->operations[] = $operation;
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */

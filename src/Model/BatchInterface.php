@@ -53,6 +53,11 @@ interface BatchInterface
     public function setOperations(array $operations);
 
     /**
+     * @param array $operations
+     */
+    public function addOperations($operation);
+
+    /**
      * @return int
      */
     public function getTotalOperations();

@@ -36,10 +36,10 @@ class OperationManager implements BaseManager
      */
     public function create($entity)
     {
-        $this->entityManager->persist($batch);
+        $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
-        return $batch;
+        return $entity;
     }
 
     /**
@@ -47,9 +47,9 @@ class OperationManager implements BaseManager
      */
     public function get($id)
     {
-        $batch = $this->batchRepository->findOneById($id);
+        $entity = $this->batchRepository->findOneById($id);
 
-        return $batch;
+        return $entity;
     }
 
     /**
