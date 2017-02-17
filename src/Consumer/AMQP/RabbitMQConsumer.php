@@ -43,8 +43,12 @@ class RabbitMQConsumer implements ConsumerInterface
         $this->entityManager->flush();
     }
 
-    public function delete()
+    public function delete($operation)
     {
-        return null;
+        $id = $operation['id'];
+        $entity = $this->repository->findOneById($id);
+
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
     }
 }
