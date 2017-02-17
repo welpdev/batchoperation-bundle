@@ -15,6 +15,8 @@ interface BatchInterface
     const STATUS_PENDING = 'welp_batch_pending';
     /** @var string */
     const STATUS_FINISHED = 'welp_batch_finished';
+    /** @var string */
+    const STATUS_ERROR = 'welp_batch_error';
 
     /**
      * @return int

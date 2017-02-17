@@ -1,13 +1,13 @@
 <?php
 
-//src/Acme/DemoBundle/Consumer/UploadPictureConsumer.php
-
 namespace Welp\BatchBundle\Consumer\AMQP;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Welp\BatchBundle\WelpBatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
+use Welp\BatchBundle\Event\OperationErrorEvent;
+use Welp\BatchBundle\Exception\OperationException;
 
 class RabbitMQConsumer implements ConsumerInterface
 {
@@ -36,7 +36,13 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $action = $temp['action'];
 
-        $this->$action($operation);
+        try {
+            $this->$action($operation);
+        } catch (OperationException $e) {
+            $event = new OperationErrorEvent($operation, $e->getMessage());
+            $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_ERROR, $event);
+            return true;
+        }
 
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
     }
@@ -48,6 +54,10 @@ class RabbitMQConsumer implements ConsumerInterface
         $form = $this->container->get('form.factory')->create(new $this->form(), $entity);
         $form->bind($operation->getPayload());
 
+        if (!$form->isValid()) {
+            throw new OperationException(400, 'Form Error, check yout payload', $operation);
+        }
+
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
@@ -56,6 +66,10 @@ class RabbitMQConsumer implements ConsumerInterface
     {
         $id = $operation->getPayload()['id'];
         $entity = $this->repository->findOneById($id);
+
+        if ($entity == null) {
+            throw new OperationException(404, $tis->className.' not found', $operation);
+        }
 
         $this->entityManager->remove($entity);
         $this->entityManager->flush();

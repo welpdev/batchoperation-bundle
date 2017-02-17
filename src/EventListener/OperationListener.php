@@ -5,6 +5,7 @@ namespace Welp\BatchBundle\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Welp\BatchBundle\WelpBatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
+use Welp\BatchBundle\Event\OperationErrorEvent;
 use Welp\BatchBundle\Model\Operation;
 use Welp\BatchBundle\Model\Batch;
 
@@ -39,7 +40,7 @@ class OperationListener implements EventSubscriberInterface
         $this->operationManager->update($operation);
 
         $batch = $operation->getBatch();
-        if ($batch->getStatus != Batch::STATUS_ACTIVE) {
+        if ($batch->getStatus() != Batch::STATUS_ACTIVE) {
             $batch->setStatus(Batch::STATUS_ACTIVE);
             $this->batchManager->update($batch);
         }
@@ -66,10 +67,14 @@ class OperationListener implements EventSubscriberInterface
         $this->batchManager->update($batch);
     }
 
-    public function errorOperation(OperationEvent $event)
+    public function errorOperation(OperationErrorEvent $event)
     {
         $operation = $event->getOperation();
-        $operation->setStatus(Operation::STATUS_FINISHED);
+        $operation->setStatus(Operation::STATUS_ERROR);
+        $temp = array(
+            'error'=>$event->getError()
+        );
+        $operation->setErrors($temp);
         $this->operationManager->update($operation);
     }
 }

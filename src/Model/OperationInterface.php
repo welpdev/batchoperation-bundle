@@ -15,6 +15,8 @@ interface OperationInterface
     const STATUS_PENDING = 'welp_operation_pending';
     /** @var string */
     const STATUS_FINISHED = 'welp_operation_finished';
+    /** @var string */
+    const STATUS_ERROR = 'welp_operation_error';
 
     /**
      * @return int
