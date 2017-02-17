@@ -37,6 +37,12 @@ class OperationListener implements EventSubscriberInterface
         $operation = $event->getOperation();
         $operation->setStatus(Operation::STATUS_ACTIVE);
         $this->operationManager->update($operation);
+
+        $batch = $operation->getBatch();
+        if ($batch->getStatus != Batch::STATUS_ACTIVE) {
+            $batch->setStatus(Batch::STATUS_ACTIVE);
+            $this->batchManager->update($batch);
+        }
     }
 
     public function finishOperation(OperationEvent $event)
