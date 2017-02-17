@@ -44,6 +44,7 @@ class WelpBatchExtension extends Extension
 
         if ($config['broker_type'] == 'rabbitmq') {
             $this->loadRMQProducerDynamically($config['manage_entities'], $config['broker_connection']);
+            $this->loadRMQConsumerDynamically($config['manage_entities'], $config['broker_connection']);
         }
 
         //TODO other broker type
@@ -105,10 +106,11 @@ class WelpBatchExtension extends Extension
 
                 $definition->addMethodCall('setCallback', array(array(new Reference($serviceName), 'execute')));
 
-                $this->injectConnection($definition, $connectionName);
+                $definition->addArgument(new Reference(sprintf('old_sound_rabbit_mq.connection.%s', $connectionName)));
 
 
-                $name = sprintf('old_sound_rabbit_mq.%s_consumer', 'welp_batch_'.$key.'_'.$action);
+                $name = sprintf('old_sound_rabbit_mq.%s_consumer', 'welp_batch.'.$key.'.'.$action);
+
                 $this->container->setDefinition($name, $definition);
                 $this->addDequeuerAwareCall($serviceName, $name);
             }
@@ -117,10 +119,10 @@ class WelpBatchExtension extends Extension
 
     public function createConsumerService($name, $entity)
     {
-        $definition = new Definition('Welp\BatchBundle\Producer\AMQP\RabbitMQConsumer', array('@service_container',$entity['entity_name'],$entity['form_name'],));
-        $container->setDefinition('welp_batch_'.$name, $defintion);
+        $definition = new Definition('Welp\BatchBundle\Consumer\AMQP\RabbitMQConsumer', array(new Reference('service_container'),$entity['entity_name'],$entity['form_name'],'%welp_batch.entity_manager%'));
+        $this->container->setDefinition('welp_batch.'.$name, $definition);
 
-        return 'welp_batch_'.$name;
+        return 'welp_batch.'.$name;
     }
 
     /**

@@ -20,7 +20,7 @@ class RabbitMQConsumer implements ConsumerInterface
         $this->container = $container;
         $this->className = $className;
         $this->form = $form;
-        $this->entityManager = $entityManager;
+        $this->entityManager = $this->container->get($entityManager);
         $this->repository = $this->entityManager->getRepository($className);
     }
 
@@ -29,7 +29,7 @@ class RabbitMQConsumer implements ConsumerInterface
         $operation = unserialize($msg->body);
         $action = $operation['action'];
 
-        $this->$action();
+        $this->$action($operation);
     }
 
 
@@ -37,7 +37,7 @@ class RabbitMQConsumer implements ConsumerInterface
     {
         $entity = new $this->className();
         $form = $this->container->get('form.factory')->create(new $this->form(), $entity);
-        $form->bind($operation->getPayload());
+        $form->bind($operation);
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
