@@ -83,6 +83,46 @@ class WelpBatchExtension extends Extension
         }
     }
 
+    public function loadRMQConsumerDynamically(array $managedEntity, $connectionName)
+    {
+        foreach ($managedEntity as $key => $entity) {
+            //create the service that the producer will call
+            $serviceName = $this->createConsumerService($key, $entity);
+            foreach ($entity['actions'] as $action) {
+                $definition = new Definition('OldSound\RabbitMqBundle\RabbitMq\Consumer');
+                $definition->addTag('old_sound_rabbit_mq.base_amqp');
+                $definition->addTag('old_sound_rabbit_mq.consumer');
+
+                $definition->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys(array(
+                    'name' => 'welp.batch.'.$key.'.'.$action,
+                    'type'=> 'direct'
+                ))));
+
+                $definition->addMethodCall('setQueueOptions', array(array(
+                    'name' => 'welp.batch.'.$key.'.'.$action,
+                    'routing_keys' => ['welp.batch.'.$key.'.'.$action]
+                )));
+
+                $definition->addMethodCall('setCallback', array(array(new Reference($serviceName), 'execute')));
+
+                $this->injectConnection($definition, $connectionName);
+
+
+                $name = sprintf('old_sound_rabbit_mq.%s_consumer', 'welp_batch_'.$key.'_'.$action);
+                $this->container->setDefinition($name, $definition);
+                $this->addDequeuerAwareCall($serviceName, $name);
+            }
+        }
+    }
+
+    public function createConsumerService($name, $entity)
+    {
+        $definition = new Definition('Welp\BatchBundle\Producer\AMQP\RabbitMQConsumer', array('@service_container',$entity['entity_name'],$entity['form_name'],));
+        $container->setDefinition('welp_batch_'.$name, $defintion);
+
+        return 'welp_batch_'.$name;
+    }
+
     /**
      * Symfony 2 converts '-' to '_' when defined in the configuration. This leads to problems when using x-ha-policy
      * parameter. So we revert the change for right configurations.
@@ -109,5 +149,23 @@ class WelpBatchExtension extends Extension
             $config['arguments'] = $newArguments;
         }
         return $config;
+    }
+
+    /**
+     * Add proper dequeuer aware call
+     *
+     * @param string $callback
+     * @param string $name
+     */
+    protected function addDequeuerAwareCall($callback, $name)
+    {
+        if (!$this->container->has($callback)) {
+            return;
+        }
+        $callbackDefinition = $this->container->findDefinition($callback);
+        $refClass = new \ReflectionClass($callbackDefinition->getClass());
+        if ($refClass->implementsInterface('OldSound\RabbitMqBundle\RabbitMq\DequeuerAwareInterface')) {
+            $callbackDefinition->addMethodCall('setDequeuer', array(new Reference($name)));
+        }
     }
 }
