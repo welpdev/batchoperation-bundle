@@ -45,6 +45,8 @@ class WelpBatchExtension extends Extension
         if ($config['broker_type'] == 'rabbitmq') {
             $this->loadRMQProducerDynamically($config['manage_entities'], $config['broker_connection']);
         }
+
+        //TODO other broker type
     }
 
 
@@ -60,23 +62,24 @@ class WelpBatchExtension extends Extension
 
     public function loadRMQProducerDynamically(array $managedEntity, $connectionName)
     {
-        //TODO add action type ( create, delete)
         foreach ($managedEntity as $key => $entity) { // for each entity, we create a new producer
-            $definition = new Definition('OldSound\RabbitMqBundle\RabbitMq\Producer');
-            $definition->addTag('old_sound_rabbit_mq.base_amqp');
-            $definition->addTag('old_sound_rabbit_mq.producer');
-            $definition->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys(array(
-                'name' => 'welp.batch.'.$key,
-                'type'=> 'direct'
-            ))));
-            $definition->addMethodCall('setQueueOptions', array(array(
-                'name' => 'welp.batch.'.$key, // add action to this name
-                'routing_keys' => ['welp.batch.'.$key] // add action to this name
-            )));
-            $definition->addArgument(new Reference(sprintf('old_sound_rabbit_mq.connection.%s', $connectionName)));
-            $definition->addMethodCall('disableAutoSetupFabric');
-            $producerServiceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$key);
-            $this->container->setDefinition($producerServiceName, $definition);
+            foreach ($entity['actions'] as $action) {
+                $definition = new Definition('OldSound\RabbitMqBundle\RabbitMq\Producer');
+                $definition->addTag('old_sound_rabbit_mq.base_amqp');
+                $definition->addTag('old_sound_rabbit_mq.producer');
+                $definition->addMethodCall('setExchangeOptions', array($this->normalizeArgumentKeys(array(
+                    'name' => 'welp.batch.'.$key.'.'.$action,
+                    'type'=> 'direct'
+                ))));
+                $definition->addMethodCall('setQueueOptions', array(array(
+                    'name' => 'welp.batch.'.$key.'.'.$action,
+                    'routing_keys' => ['welp.batch.'.$key.'.'.$action]
+                )));
+                $definition->addArgument(new Reference(sprintf('old_sound_rabbit_mq.connection.%s', $connectionName)));
+                $definition->addMethodCall('disableAutoSetupFabric');
+                $producerServiceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$key.'_'.$action);
+                $this->container->setDefinition($producerServiceName, $definition);
+            }
         }
     }
 

@@ -23,12 +23,12 @@ class RabbitMQProducer implements BaseProducer
         $operation['batchId']=$batchId;
         $sMsg = serialize($operation);
         $this->container->get($serviceName)->setupFabric();
-        $this->container->get($serviceName)->publish($sMsg, 'welp.batch.'.$type);
+        $this->container->get($serviceName)->publish($sMsg, 'welp.batch.'.$type.'.'.$action);
     }
 
     public function selectQueue($entity, $action)
     {
-        $serviceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$entity);
+        $serviceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$entity.'_'.$action);
         return $serviceName;
     }
 }

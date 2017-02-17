@@ -40,7 +40,8 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('entity_name')->defaultValue('')->end()
                         ->scalarNode('form_name')->defaultValue('')->end()
-                        ->scalarNode('queue_name')->defaultValue('')->end()
+                        ->arrayNode('actions')
+                            ->prototype('scalar')->end()
                     ->end()
                 ->end()
             ->end();
