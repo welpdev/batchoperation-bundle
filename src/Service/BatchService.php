@@ -1,6 +1,6 @@
 <?php
 
-namespace Welp\BatchBundle\Provider;
+namespace Welp\BatchBundle\Service;
 
 use Welp\BatchBundle\Model\Batch;
 use Welp\BatchBundle\Model\Operation;
@@ -8,7 +8,7 @@ use Welp\BatchBundle\Model\Operation;
 /**
  * batch Factory
  */
-class BatchProvider
+class BatchService
 {
     private $entityManager;
     private $container;
