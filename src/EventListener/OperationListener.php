@@ -50,21 +50,11 @@ class OperationListener implements EventSubscriberInterface
     {
         $operation = $event->getOperation();
         $operation->setStatus(Operation::STATUS_FINISHED);
+        $this->operationManager->update($operation);
 
         //MAJ BATCH
         $batch = $operation->getBatch();
-
-        $totalOperations = $batch->getTotalOperations();
-        $totalExecutedOperations = $batch->getTotalExecutedOperations();
-
-        $totalExecutedOperations+=1;
-        $batch->setTotalExecutedOperations($totalExecutedOperations);
-        if ($totalOperations <= $totalExecutedOperations) {
-            $batch->setStatus(Batch::STATUS_FINISHED);
-        }
-
-        $this->operationManager->update($operation);
-        $this->batchManager->update($batch);
+        $this->updatebatch($batch);
     }
 
     public function errorOperation(OperationErrorEvent $event)
@@ -76,5 +66,31 @@ class OperationListener implements EventSubscriberInterface
         );
         $operation->setErrors($temp);
         $this->operationManager->update($operation);
+
+        $batch = $operation->getBatch();
+        $this->updatebatch($batch);
+    }
+
+    public function updateBatch($batch)
+    {
+        $totalOperations = $batch->getTotalOperations();
+        $totalExecutedOperations = $batch->getTotalExecutedOperations();
+
+        $totalExecutedOperations+=1;
+        $batch->setTotalExecutedOperations($totalExecutedOperations);
+        if ($totalOperations <= $totalExecutedOperations) {
+            $batch->setStatus(Batch::STATUS_FINISHED);
+        }
+        $arrayError = array();
+        foreach ($batch->getOperations() as $operation) {
+            if ($operation->getStatus() == Operation::STATUS_ERROR) {
+                $arrayError[]= array(
+                    'operationId' => $operation->getId(),
+                    'errorMessage' => $operation->getErrors()
+                );
+            }
+        }
+        $batch->setErrors($arrayError);
+        $this->batchManager->update($batch);
     }
 }
