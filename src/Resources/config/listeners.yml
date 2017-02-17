@@ -1,0 +1,7 @@
+services:
+    welp_batch.operation.listener:
+        class: Welp\BatchBundle\EventListener\OperationListener
+        arguments:
+            - '@welp_batch.operation_manager'
+        tags:
+            - { name: kernel.event_subscriber }

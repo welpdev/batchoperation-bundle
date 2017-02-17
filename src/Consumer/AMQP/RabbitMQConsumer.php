@@ -6,6 +6,8 @@ namespace Welp\BatchBundle\Consumer\AMQP;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Welp\BatchBundle\WelpBatchEvent;
+use Welp\BatchBundle\Event\OperationEvent;
 
 class RabbitMQConsumer implements ConsumerInterface
 {
@@ -26,10 +28,17 @@ class RabbitMQConsumer implements ConsumerInterface
 
     public function execute(AMQPMessage $msg)
     {
-        $operation = unserialize($msg->body);
-        $action = $operation['action'];
+        $temp = unserialize($msg->body);
+        $operation = $this->container->get('welp_batch.operation_manager')->get($temp['operationId']);
+
+        $event = new OperationEvent($operation);
+        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_STARTED, $event);
+
+        $action = $temp['action'];
 
         $this->$action($operation);
+
+        $this->container->get('event_dispatcher')->dispatch(WelpbatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
     }
 
 
@@ -37,7 +46,7 @@ class RabbitMQConsumer implements ConsumerInterface
     {
         $entity = new $this->className();
         $form = $this->container->get('form.factory')->create(new $this->form(), $entity);
-        $form->bind($operation);
+        $form->bind($operation->getPayload());
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
@@ -45,7 +54,7 @@ class RabbitMQConsumer implements ConsumerInterface
 
     public function delete($operation)
     {
-        $id = $operation['id'];
+        $id = $operation->getPayload()['id'];
         $entity = $this->repository->findOneById($id);
 
         $this->entityManager->remove($entity);

@@ -50,10 +50,13 @@ class BatchProvider
             $action = $ope['action'];
 
             unset($ope['type']);
+            unset($ope['action']);
+            
             $operation->setPayload($ope);
             $operation->setBatch($batch);
             $batch->addOperations($operation);
-            $this->container->get('welp_batch.producer')->produce($ope, $batch->getId(), $type, $action);
+            $this->operationManager->create($operation);
+            $this->container->get('welp_batch.producer')->produce($operation, $batch->getId(), $type, $action);
         }
 
         $this->batchManager->update($batch);

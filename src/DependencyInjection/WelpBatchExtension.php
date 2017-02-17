@@ -41,6 +41,7 @@ class WelpBatchExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load($config['broker_type'].'.yml');
         $loader->load('managers.yml');
+        $loader->load('listeners.yml');
 
         if ($config['broker_type'] == 'rabbitmq') {
             $this->loadRMQProducerDynamically($config['manage_entities'], $config['broker_connection']);

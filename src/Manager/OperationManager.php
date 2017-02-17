@@ -47,8 +47,7 @@ class OperationManager implements BaseManager
      */
     public function get($id)
     {
-        $entity = $this->batchRepository->findOneById($id);
-
+        $entity = $this->repository->findOneById($id);
         return $entity;
     }
 

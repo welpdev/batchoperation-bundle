@@ -16,12 +16,17 @@ class RabbitMQProducer implements BaseProducer
         $this->container = $container;
     }
 
-    public function produce(array $operation, $batchId, $type, $action)
+    public function produce($operation, $batchId, $type, $action)
     {
         $serviceName = $this->selectQueue($type, $action);
 
-        $operation['batchId']=$batchId;
-        $sMsg = serialize($operation);
+        $message = array();
+        $message['batchId']=$batchId;
+        $message['operationId']=$operation->getId();
+        $message['type']=$type;
+        $message['action']=$action;
+
+        $sMsg = serialize($message);
         $this->container->get($serviceName)->setupFabric();
         $this->container->get($serviceName)->publish($sMsg, 'welp.batch.'.$type.'.'.$action);
     }
