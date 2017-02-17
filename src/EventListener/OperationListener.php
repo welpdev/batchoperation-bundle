@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Welp\BatchBundle\WelpBatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
 use Welp\BatchBundle\Model\Operation;
+use Welp\BatchBundle\Model\Batch;
 
 /**
  * Recalculate average when new evaluation
@@ -14,10 +15,12 @@ use Welp\BatchBundle\Model\Operation;
 class OperationListener implements EventSubscriberInterface
 {
     private $operationManager;
+    private $batchManager;
 
-    public function __construct($operationManager)
+    public function __construct($operationManager, $batchManager)
     {
         $this->operationManager = $operationManager;
+        $this->batchManager = $batchManager;
     }
 
     public static function getSubscribedEvents()
@@ -40,7 +43,21 @@ class OperationListener implements EventSubscriberInterface
     {
         $operation = $event->getOperation();
         $operation->setStatus(Operation::STATUS_FINISHED);
+
+        //MAJ BATCH
+        $batch = $operation->getBatch();
+
+        $totalOperations = $batch->getTotalOperations();
+        $totalExecutedOperations = $batch->getTotalExecutedOperations();
+
+        $totalExecutedOperations+=1;
+        $batch->setTotalExecutedOperations($totalExecutedOperations);
+        if ($totalOperations <= $totalExecutedOperations) {
+            $batch->setStatus(Batch::STATUS_FINISHED);
+        }
+
         $this->operationManager->update($operation);
+        $this->batchManager->update($batch);
     }
 
     public function errorOperation(OperationEvent $event)

@@ -51,7 +51,7 @@ class BatchProvider
 
             unset($ope['type']);
             unset($ope['action']);
-            
+
             $operation->setPayload($ope);
             $operation->setBatch($batch);
             $batch->addOperations($operation);
@@ -102,16 +102,6 @@ class BatchProvider
         }
 
         $this->entityManager->persist($batch);
-        $this->entityManager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        $batch = $this->batchRepository->findOneById($id);
-        $this->entityManager->remove($batch);
         $this->entityManager->flush();
     }
 }

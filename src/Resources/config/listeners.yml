@@ -3,5 +3,6 @@ services:
         class: Welp\BatchBundle\EventListener\OperationListener
         arguments:
             - '@welp_batch.operation_manager'
+            - '@welp_batch.batch_manager'
         tags:
             - { name: kernel.event_subscriber }
