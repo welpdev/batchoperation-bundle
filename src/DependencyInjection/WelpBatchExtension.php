@@ -76,6 +76,7 @@ class WelpBatchExtension extends Extension
                     'name' => 'welp.batch.'.$key.'.'.$action,
                     'routing_keys' => ['welp.batch.'.$key.'.'.$action]
                 )));
+
                 $definition->addArgument(new Reference(sprintf('old_sound_rabbit_mq.connection.%s', $connectionName)));
                 $definition->addMethodCall('disableAutoSetupFabric');
                 $producerServiceName = sprintf('old_sound_rabbit_mq.%s_producer', 'welp_batch_'.$key.'_'.$action);
@@ -103,6 +104,12 @@ class WelpBatchExtension extends Extension
                     'name' => 'welp.batch.'.$key.'.'.$action,
                     'routing_keys' => ['welp.batch.'.$key.'.'.$action]
                 )));
+
+                $definition->addMethodCall('setQosOptions', array(
+                    0,
+                    $entity['batch_size'],
+                    false
+                ));
 
                 $definition->addMethodCall('setCallback', array(array(new Reference($serviceName), 'execute')));
 
