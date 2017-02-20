@@ -25,11 +25,7 @@ class WelpBatchExtension extends Extension
         $this->container = $container;
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        /*$container->setParameter('welp_batch.rabbitmq_producer_service_name', $config['rabbitmq_producer_service_name']);
-        $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);
-        $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);
-        $container->setParameter('welp_batch.rabbitmq_producer_routing_keys', $config['rabbitmq_producer_routing_keys']);*/
+        $bundles = $container->getParameter('kernel.bundles');
 
         $container->setParameter('welp_batch.entity_manager', $config['entity_manager']);
         $container->setParameter('welp_batch.broker_type', $config['broker_type']);
@@ -44,6 +40,9 @@ class WelpBatchExtension extends Extension
         $loader->load('listeners.yml');
 
         if ($config['broker_type'] == 'rabbitmq') {
+            if (!isset($bundles['OldSoundRabbitMqBundle'])) { // TODO check wihch exception to raise
+                throw new \Exception('You must install OldSoundRabbitMqBundle in order to use the broker_type rabbitmq');
+            }
             $this->loadRMQProducerDynamically($config['manage_entities'], $config['broker_connection']);
             $this->loadRMQConsumerDynamically($config['manage_entities'], $config['broker_connection']);
         }
