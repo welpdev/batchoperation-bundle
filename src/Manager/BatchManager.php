@@ -50,7 +50,7 @@ class BatchManager implements BaseManager
      */
     public function get($id)
     {
-        $batch = $this->entityManager->findOneById($id);
+        $batch = $this->repository->findOneById($id);
 
         return $batch;
     }
