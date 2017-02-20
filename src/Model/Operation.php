@@ -3,12 +3,14 @@
 namespace Welp\BatchBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Welp\BatchBundle\Model\Traits\TimeStampableTrait;
 
 /**
  * Operation
  */
 abstract class Operation implements OperationInterface
 {
+    use TimeStampableTrait;
 
     /**
      * @var int

@@ -5,9 +5,11 @@ namespace Welp\BatchBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Welp\BatchBundle\Model\Traits\TimeStampableTrait;
 
 abstract class Batch implements BatchInterface
 {
+    use TimeStampableTrait;
 
     /**
      * @var int
