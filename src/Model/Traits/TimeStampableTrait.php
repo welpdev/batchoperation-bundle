@@ -6,13 +6,13 @@ namespace Welp\BatchBundle\Model\Traits;
  */
 trait TimeStampableTrait
 {
-    private $createdAt;
+    protected $createdAt;
 
-    private $updatedAt;
+    protected $updatedAt;
 
-    private $startedAt;
+    protected $startedAt;
 
-    private $finishedAt;
+    protected $finishedAt;
 
     /**
      * Sets createdAt.

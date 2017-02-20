@@ -35,6 +35,10 @@ class BatchManager implements BaseManager
      */
     public function create($entity)
     {
+        //handle timestamp
+        $entity->setCreatedAt(new \DateTime());
+        $entity->setUpdatedAt(new \DateTime());
+
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
@@ -56,6 +60,8 @@ class BatchManager implements BaseManager
      */
     public function update($entity)
     {
+        $entity->setUpdatedAt(new \DateTime());
+
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }

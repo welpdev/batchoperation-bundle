@@ -37,11 +37,13 @@ class OperationListener implements EventSubscriberInterface
     {
         $operation = $event->getOperation();
         $operation->setStatus(Operation::STATUS_ACTIVE);
+        $operation->setStartedAt(new \DateTime());
         $this->operationManager->update($operation);
 
         $batch = $operation->getBatch();
         if ($batch->getStatus() != Batch::STATUS_ACTIVE) {
             $batch->setStatus(Batch::STATUS_ACTIVE);
+            $batch->setStartedAt(new \DateTime());
             $this->batchManager->update($batch);
         }
     }
@@ -50,9 +52,10 @@ class OperationListener implements EventSubscriberInterface
     {
         $operation = $event->getOperation();
         $operation->setStatus(Operation::STATUS_FINISHED);
+        $operation->setFinishedAt(new \DateTime());
         $this->operationManager->update($operation);
 
-        //MAJ BATCH
+        //update BATCH
         $batch = $operation->getBatch();
         $this->updatebatch($batch);
     }
@@ -61,6 +64,7 @@ class OperationListener implements EventSubscriberInterface
     {
         $operation = $event->getOperation();
         $operation->setStatus(Operation::STATUS_ERROR);
+        $operation->setFinishedAt(new \DateTime());
         $temp = array(
             'error'=>$event->getError()
         );
@@ -78,19 +82,23 @@ class OperationListener implements EventSubscriberInterface
 
         $totalExecutedOperations+=1;
         $batch->setTotalExecutedOperations($totalExecutedOperations);
-        if ($totalOperations <= $totalExecutedOperations) {
+
+        if ($totalOperations <= $totalExecutedOperations) { //all operations have been executed
             $batch->setStatus(Batch::STATUS_FINISHED);
-        }
-        $arrayError = array();
-        foreach ($batch->getOperations() as $operation) {
-            if ($operation->getStatus() == Operation::STATUS_ERROR) {
-                $arrayError[]= array(
-                    'operationId' => $operation->getId(),
-                    'errorMessage' => $operation->getErrors()
-                );
+            $batch->setFinishedAt(new \DateTime());
+
+            $arrayError = array();
+            foreach ($batch->getOperations() as $operation) {
+                if ($operation->getStatus() == Operation::STATUS_ERROR) {
+                    $arrayError[]= array(
+                        'operationId' => $operation->getId(),
+                        'errorMessage' => $operation->getErrors()
+                    );
+                }
             }
+            $batch->setErrors($arrayError);
         }
-        $batch->setErrors($arrayError);
+
         $this->batchManager->update($batch);
     }
 }
