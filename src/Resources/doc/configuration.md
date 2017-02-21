@@ -29,5 +29,5 @@ You can add as many entities as you like. Each of them must have the following a
 
 * entity_name : full name of the entity
 * form_name : full name of the form corresponding to this entity. This form will be used to bind the given parameters to the new entity (see section TODO for more details)
-*  actions : array of action. At the moment, we only support create and delete
+* actions : array of action. At the moment, we only support create and delete
 * batch_size : number of message to take from the queue at a time.
