@@ -51,6 +51,7 @@ class BatchService
 
             $type = $ope['type'];
             $action = $ope['action'];
+            $ope['operationId']=$indexOperation;
             $operation->setId($indexOperation);
 
             $indexOperation+=1;

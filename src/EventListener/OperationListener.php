@@ -90,16 +90,8 @@ class OperationListener implements EventSubscriberInterface
             $batch->setStatus(Batch::STATUS_FINISHED);
             $batch->setFinishedAt(new \DateTime());
 
-            $arrayError = array();
-            /*foreach ($batch->getOperations() as $operation) {
-                if ($operation == Operation::STATUS_ERROR) {
-                    $arrayError[]= array(
-                        'operationId' => $operation->getId(),
-                        'errorMessage' => $operation->getErrors()
-                    );
-                }
-            }
-            $batch->setErrors($arrayError);*/
+            //write the responses to a file TODO check if this is the right thing to do
+            $this->batchManager->generateResults($batch);
         }
 
         $this->batchManager->update($batch);

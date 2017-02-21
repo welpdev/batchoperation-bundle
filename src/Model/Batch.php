@@ -138,6 +138,10 @@ abstract class Batch implements BatchInterface
      */
     public function getErrors()
     {
+        if($this->errors == null){
+            return array();
+        }
+        
         return $this->errors;
     }
 

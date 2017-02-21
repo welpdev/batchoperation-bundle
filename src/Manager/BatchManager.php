@@ -61,7 +61,7 @@ class BatchManager implements BaseManager
     public function update($entity)
     {
         $entity->setUpdatedAt(new \DateTime());
-
+        //dump($entity);die();
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
@@ -73,5 +73,31 @@ class BatchManager implements BaseManager
     {
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+    }
+
+    public function generateResults($batch){
+        $today = new \DateTime();
+        $fileName = $this->container->getParameter('welp_batch.batch_results_folder').'results-'.$batch->getId().'-'.$today->format('Y-m-d\TH-i-s');
+        $arrayResponses = array();
+
+        foreach ($batch->getOperations() as $operation) {
+            $test = array_filter($batch->getErrors(), function($e) use ($operation){
+                return $e['operationId'] == $operation['operationId'];
+            });
+            $result = array();
+            $result['operationId'] = $operation['operationId'];
+            $result['error'] = false;
+            if(count($test)>0){
+                $result['text'] = $test[0]["error"];
+                $result['error'] = true;
+            }else{
+                $result['message'] = 'operation OK';
+            }
+
+            $arrayResponses[] = $result;
+            //dump(json_encode($arrayResponses));die();
+        }
+
+        file_put_contents($fileName,json_encode($arrayResponses));
     }
 }

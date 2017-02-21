@@ -32,6 +32,7 @@ class WelpBatchExtension extends Extension
         $container->setParameter('welp_batch.batch_entity.batch', $config['batch_entity']['batch']);
         $container->setParameter('welp_batch.batch_entity.operation', $config['batch_entity']['operation']);
         $container->setParameter('welp_batch.broker_connection', $config['broker_connection']);
+        $container->setParameter('welp_batch.batch_results_folder', $config['batch_results_folder']);
 
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -105,11 +106,11 @@ class WelpBatchExtension extends Extension
                     'routing_keys' => ['welp.batch.'.$key.'.'.$action]
                 )));
 
-                $definition->addMethodCall('setQosOptions', array(
+                /*$definition->addMethodCall('setQosOptions', array(
                     0,
                     $entity['batch_size'],
                     false
-                ));
+                ));*/
 
                 $definition->addMethodCall('setCallback', array(array(new Reference($serviceName), 'execute')));
 
