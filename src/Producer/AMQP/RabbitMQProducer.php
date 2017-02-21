@@ -22,10 +22,11 @@ class RabbitMQProducer implements BaseProducer
 
         $message = array();
         $message['batchId']=$batchId;
+        $message['operationId'] = $operation->getId();
         $message['operationPayload']=$operation->getPayload();
         $message['type']=$type;
         $message['action']=$action;
-
+        
         $sMsg = serialize($message);
         $this->container->get($serviceName)->setupFabric();
         $this->container->get($serviceName)->publish($sMsg, 'welp.batch.'.$type.'.'.$action);

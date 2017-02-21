@@ -35,12 +35,15 @@ class BatchService
             }
         }
 
+
+
         $batch = $this->batchManager->createNew();
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setTotalOperations(count($operations));
         $batch->setTotalExecutedOperations(0);
         $this->batchManager->create($batch);
 
+        $indexOperation = 1;
         foreach ($operations as $ope) {
             $operation = $this->operationManager->createNew();
             $operation->setType($ope['type']);
@@ -48,14 +51,15 @@ class BatchService
 
             $type = $ope['type'];
             $action = $ope['action'];
+            $operation->setId($indexOperation);
 
-            unset($ope['type']);
-            unset($ope['action']);
+            $indexOperation+=1;
 
-            $operation->setPayload($ope);
-            $batch->addOperations($operation);
+            $operation->setPayload($ope['payload']);
+            $batch->addOperations($ope);
             $this->operationManager->create($operation);
             $this->container->get('welp_batch.producer')->produce($operation, $batch->getId(), $type, $action);
+
         }
         $this->batchManager->update($batch);
 

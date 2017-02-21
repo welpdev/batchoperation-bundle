@@ -45,7 +45,7 @@ class RabbitMQConsumer implements ConsumerInterface
         try {
             $this->$action($operationPayload, $batch);
         } catch (BatchException $e) {
-            $event = new BatchErrorEvent($batch, $e->getMessage());
+            $event = new BatchErrorEvent($batch, $e->getMessage(), $temp['operationId']);
             $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_ERROR, $event);
             return true;
         }

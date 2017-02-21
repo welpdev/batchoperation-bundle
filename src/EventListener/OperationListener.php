@@ -68,7 +68,8 @@ class OperationListener implements EventSubscriberInterface
         //$operation->setStatus(Operation::STATUS_ERROR);
         //$operation->setFinishedAt(new \DateTime());
         $temp = array(
-            'error'=>$event->getError()
+            'error'=>$event->getError(),
+            'operationId'=> $event->getOperationId()
         );
         //$operation->setErrors($temp);
         //$this->operationManager->update($operation);
@@ -89,9 +90,9 @@ class OperationListener implements EventSubscriberInterface
             $batch->setStatus(Batch::STATUS_FINISHED);
             $batch->setFinishedAt(new \DateTime());
 
-            /*$arrayError = array();
-            foreach ($batch->getOperations() as $operation) {
-                if ($operation->getStatus() == Operation::STATUS_ERROR) {
+            $arrayError = array();
+            /*foreach ($batch->getOperations() as $operation) {
+                if ($operation == Operation::STATUS_ERROR) {
                     $arrayError[]= array(
                         'operationId' => $operation->getId(),
                         'errorMessage' => $operation->getErrors()
