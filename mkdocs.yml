@@ -1,0 +1,15 @@
+site_name: WelpBatch Bundle
+site_description: This bundle will help batch your action to given entities
+site_author: Gaetan DELBART
+copyright: MIT
+repo_url: https://github.com/welpdev/batchoperation-bundle
+docs_dir: 'src/Resources/doc'
+site_dir: "docs"
+pages:
+    - Installation: installation.md
+    - Configuration: configuration.md
+    - API : api.md
+    - Usage: usage.md
+theme: readthedocs
+markdown_extensions:
+    - pymdownx.github
