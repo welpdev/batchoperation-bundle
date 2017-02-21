@@ -41,6 +41,19 @@ class BatchController extends FOSRestController
             'batch' => $batch
         );
     }
+    /**
+     * @Rest\View(serializerEnableMaxDepthChecks=true)
+     */
+    public function getBatchesResultsAction(Request $request, $id){
+        $batchManager = $this->get('welp_batch.batch_manager');
+
+        $file = $batchManager->getResultFile($id);
+
+        return array(
+            'success' =>true,
+            'file'=> $file
+        );
+    }
 
     /**
     *

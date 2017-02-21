@@ -95,9 +95,25 @@ class BatchManager implements BaseManager
             }
 
             $arrayResponses[] = $result;
-            //dump(json_encode($arrayResponses));die();
         }
 
         file_put_contents($fileName,json_encode($arrayResponses));
+
+        return json_encode($arrayResponses);
+    }
+
+    public function getResultFile($id){
+        $batch = $this->repository->findOneById($id);
+        $filenameGlob = $fileName = $this->container->getParameter('welp_batch.batch_results_folder').'results-'.$batch->getId().'-*';
+
+        $files = glob($filenameGlob);
+        $content = "";
+        if(count($files) > 0){
+            $content = file_get_contents(end($files));
+        }else{
+            $content = $this->generateResults($batch); // the files don't exist, we regenerate it.
+        }
+        $content = $content;
+        return $content;
     }
 }
