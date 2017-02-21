@@ -53,16 +53,11 @@ class BatchService
             unset($ope['action']);
 
             $operation->setPayload($ope);
-            $operation->setBatch($batch);
             $batch->addOperations($operation);
             $this->operationManager->create($operation);
             $this->container->get('welp_batch.producer')->produce($operation, $batch->getId(), $type, $action);
         }
-
         $this->batchManager->update($batch);
-
-
-        //produce the operations to rmq
 
 
         return $batch;

@@ -50,7 +50,6 @@ class BatchController extends FOSRestController
     *   description = "Create a batch",
     *   section = "Batches",
     *   parameters ={
-    *       {"name"="operations", "dataType"="array","required"=true, "description"="Array of operations. Each operations must have a type and an action"},
     *   },
     *   statusCodes={
     *       200="Returned when successful",
@@ -77,7 +76,6 @@ class BatchController extends FOSRestController
     * @Rest\View(serializerEnableMaxDepthChecks=true)
     * @ApiDoc(
     *   resource = true,
-    *   description = "Delete a batch",
     *   section = "Batches",
     *   parameters ={
     *       {"name"="id", "dataType"="integer","required"=true, "description"="id of the batch"},

@@ -5,8 +5,11 @@ namespace Welp\BatchBundle\Consumer\AMQP;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Welp\BatchBundle\WelpBatchEvent;
+use Welp\BatchBundle\Event\BatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
+use Welp\BatchBundle\Event\BatchErrorEvent;
 use Welp\BatchBundle\Event\OperationErrorEvent;
+use Welp\BatchBundle\Exception\BatchException;
 use Welp\BatchBundle\Exception\OperationException;
 
 class RabbitMQConsumer implements ConsumerInterface
@@ -29,17 +32,20 @@ class RabbitMQConsumer implements ConsumerInterface
     public function execute(AMQPMessage $msg)
     {
         $temp = unserialize($msg->body);
-        $operation = $this->container->get('welp_batch.operation_manager')->get($temp['operationId']);
 
-        $event = new OperationEvent($operation);
+        $operationPayload = $temp['operationPayload'];
+
+        $batch = $this->container->get('welp_batch.batch_manager')->get($temp['batchId']);
+
+        $event = new BatchEvent($batch);
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_STARTED, $event);
 
         $action = $temp['action'];
 
         try {
-            $this->$action($operation);
-        } catch (OperationException $e) {
-            $event = new OperationErrorEvent($operation, $e->getMessage());
+            $this->$action($operationPayload, $batch);
+        } catch (BatchException $e) {
+            $event = new BatchErrorEvent($batch, $e->getMessage());
             $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_ERROR, $event);
             return true;
         }
@@ -48,27 +54,27 @@ class RabbitMQConsumer implements ConsumerInterface
     }
 
 
-    public function create($operation)
+    public function create($operationPayload, $batch)
     {
         $entity = new $this->className();
         $form = $this->container->get('form.factory')->create(new $this->form(), $entity);
-        $form->bind($operation->getPayload());
+        $form->bind($operationPayload);
 
         if (!$form->isValid()) {
-            throw new OperationException(400, 'Form Error, check yout payload', $operation);
+            throw new BatchException(400, 'Form Error, check yout payload', $batch);
         }
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
 
-    public function delete($operation)
+    public function delete($operationPayload, $batch)
     {
-        $id = $operation->getPayload()['id'];
+        $id = $operationPayload['id'];
         $entity = $this->repository->findOneById($id);
 
         if ($entity == null) {
-            throw new OperationException(404, $tis->className.' not found', $operation);
+            throw new BatchException(404, $tis->className.' not found', $batch);
         }
 
         $this->entityManager->remove($entity);

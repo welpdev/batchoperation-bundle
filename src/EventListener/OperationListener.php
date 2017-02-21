@@ -4,8 +4,10 @@ namespace Welp\BatchBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Welp\BatchBundle\WelpBatchEvent;
+use Welp\BatchBundle\Event\BatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
 use Welp\BatchBundle\Event\OperationErrorEvent;
+use Welp\BatchBundle\Event\BatchErrorEvent;
 use Welp\BatchBundle\Model\Operation;
 use Welp\BatchBundle\Model\Batch;
 
@@ -33,14 +35,14 @@ class OperationListener implements EventSubscriberInterface
         ];
     }
 
-    public function startOperation(OperationEvent $event)
+    public function startOperation(BatchEvent $event)
     {
-        $operation = $event->getOperation();
-        $operation->setStatus(Operation::STATUS_ACTIVE);
+        $batch = $event->getBatch();
+        /*$operation->setStatus(Operation::STATUS_ACTIVE);
         $operation->setStartedAt(new \DateTime());
-        $this->operationManager->update($operation);
+        $this->operationManager->update($operation);*/
 
-        $batch = $operation->getBatch();
+        //$batch = $operation->getBatch();
         if ($batch->getStatus() != Batch::STATUS_ACTIVE) {
             $batch->setStatus(Batch::STATUS_ACTIVE);
             $batch->setStartedAt(new \DateTime());
@@ -48,30 +50,30 @@ class OperationListener implements EventSubscriberInterface
         }
     }
 
-    public function finishOperation(OperationEvent $event)
+    public function finishOperation(BatchEvent $event)
     {
-        $operation = $event->getOperation();
+        /*$operation = $event->getBatch();
         $operation->setStatus(Operation::STATUS_FINISHED);
         $operation->setFinishedAt(new \DateTime());
-        $this->operationManager->update($operation);
+        $this->operationManager->update($operation);*/
 
         //update BATCH
-        $batch = $operation->getBatch();
+        $batch = $event->getBatch();
         $this->updatebatch($batch);
     }
 
-    public function errorOperation(OperationErrorEvent $event)
+    public function errorOperation(BatchErrorEvent $event)
     {
-        $operation = $event->getOperation();
-        $operation->setStatus(Operation::STATUS_ERROR);
-        $operation->setFinishedAt(new \DateTime());
+        $batch = $event->getBatch();
+        //$operation->setStatus(Operation::STATUS_ERROR);
+        //$operation->setFinishedAt(new \DateTime());
         $temp = array(
             'error'=>$event->getError()
         );
-        $operation->setErrors($temp);
-        $this->operationManager->update($operation);
-
-        $batch = $operation->getBatch();
+        //$operation->setErrors($temp);
+        //$this->operationManager->update($operation);
+        $batch->addError($temp);
+        //$batch = $operation->getBatch();
         $this->updatebatch($batch);
     }
 
@@ -87,7 +89,7 @@ class OperationListener implements EventSubscriberInterface
             $batch->setStatus(Batch::STATUS_FINISHED);
             $batch->setFinishedAt(new \DateTime());
 
-            $arrayError = array();
+            /*$arrayError = array();
             foreach ($batch->getOperations() as $operation) {
                 if ($operation->getStatus() == Operation::STATUS_ERROR) {
                     $arrayError[]= array(
@@ -96,7 +98,7 @@ class OperationListener implements EventSubscriberInterface
                     );
                 }
             }
-            $batch->setErrors($arrayError);
+            $batch->setErrors($arrayError);*/
         }
 
         $this->batchManager->update($batch);

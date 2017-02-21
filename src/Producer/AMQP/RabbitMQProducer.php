@@ -22,7 +22,7 @@ class RabbitMQProducer implements BaseProducer
 
         $message = array();
         $message['batchId']=$batchId;
-        $message['operationId']=$operation->getId();
+        $message['operationPayload']=$operation->getPayload();
         $message['type']=$type;
         $message['action']=$action;
 

@@ -8,7 +8,7 @@ use Welp\BatchBundle\Model\Traits\TimeStampableTrait;
 /**
  * Operation
  */
-abstract class Operation implements OperationInterface
+class Operation implements OperationInterface
 {
     use TimeStampableTrait;
 
@@ -36,8 +36,6 @@ abstract class Operation implements OperationInterface
      * @var ArrayCollection $errors
      */
     protected $errors;
-
-    protected $batch;
 
     /**
      * @return int
@@ -132,15 +130,5 @@ abstract class Operation implements OperationInterface
     public function addError(array $error)
     {
         $this->errors[] = $error;
-    }
-
-    public function getBatch()
-    {
-        return $this->batch;
-    }
-
-    public function setBatch($batch)
-    {
-        $this->batch = $batch;
     }
 }
