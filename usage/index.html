@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Gaetan DELBART">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Usage - WelpBatch Bundle</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Usage";
+    var mkdocs_page_input_path = "usage.md";
+    var mkdocs_page_url = "/usage/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../installation/" class="icon icon-home"> WelpBatch Bundle</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../installation/">Installation</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../configuration/">Configuration</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../api/">API</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Usage</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#usage">Usage</a></li>
+                
+                    <li><a class="toctree-l4" href="#configure-consumersproducers-queue">Configure consumers/producers queue</a></li>
+                
+                    <li><a class="toctree-l4" href="#call-the-batch_service">Call the batch_service</a></li>
+                
+                    <li><a class="toctree-l4" href="#create-and-save-the-batch">Create and save the batch</a></li>
+                
+                    <li><a class="toctree-l4" href="#publish-to-the-broker">Publish to the broker</a></li>
+                
+                    <li><a class="toctree-l4" href="#execute-actions">Execute actions</a></li>
+                
+                    <li><a class="toctree-l4" href="#update-batchoperation-status">Update batch/operation status</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../installation/">WelpBatch Bundle</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../installation/">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Usage</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/welpdev/batchoperation-bundle/edit/master/docs/usage.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="usage">Usage</h1>
+<p>The purpose is to manage a very long list of create/delete for you entity. for this we use these steps</p>
+<ol>
+<li>Configure consumers/producers queue</li>
+<li>Call the batch_service with an array of operation</li>
+<li>Create and save the batch</li>
+<li>for each operations, create and save + send a message to the queue with the producer</li>
+<li>The consumer take the message, and execute the given operation.</li>
+</ol>
+<h2 id="configure-consumersproducers-queue">Configure consumers/producers queue</h2>
+<p>We automatically create a couple of producers/consumers for each actions of a manage_entity. if you take this example</p>
+<pre class="highlight"><code class="language-yaml linenums">    manage_entities: #Batchable entity
+        need:
+            entity_name: AppBundle\Entity\Need
+            form_name: ApiBundle\Form\NeedType
+            batch_size: 10
+            actions: ['create','delete']
+        proposition:
+            entity_name: AppBundle\Entity\Proposition
+            form_name: ApiBundle\Form\PropositionType
+            batch_size: 10
+            actions: ['create']</code></pre>
+
+<p>it will automatically create queues named
+* welp.batch.need.create
+* welp.batch.need.delete
+* welp.batch.proposition.create</p>
+<h2 id="call-the-batch_service">Call the batch_service</h2>
+<p>The service is called <code>welp_batch.batch_service</code>. It is the main entrance to this bundle. You can use it in your controller, or you can use our REST controller.</p>
+<p>This service provide a create method. This method accept an array parameter, which contain all the operations you want to batch.
+When using our REST Controller, you have to call the POST /batches with a json like this</p>
+<pre class="highlight"><code class="language-json linenums">{
+    &quot;operations&quot;:[{
+        &quot;type&quot;:&quot;need&quot;,
+        &quot;action&quot;:&quot;create&quot;,
+        &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
+        &quot;description&quot;:&quot;le test du batch du need2&quot;,
+        &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
+        &quot;category&quot;:11,
+        &quot;author&quot;:2
+    },{
+        &quot;type&quot;:&quot;need&quot;,
+        &quot;action&quot;:&quot;create&quot;,
+        &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
+        &quot;description&quot;:&quot;le test du batch du need2&quot;,
+        &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
+        &quot;category&quot;:11,
+        &quot;author&quot;:2
+    }]
+}</code></pre>
+
+<h2 id="create-and-save-the-batch">Create and save the batch</h2>
+<p>With this example, it will add 2 operations to the queue welp.batch.need.create
+When the service receive the request, it will create a batch. Then, for each operations (two in the given example), it will create and save operations.
+Those operations are transmit to the <code>welp_batch.producer</code> thanks to the <code>produce</code> method</p>
+<h2 id="publish-to-the-broker">Publish to the broker</h2>
+<p>When the <code>produce($operation, $batchId,$type,$action )</code> method is called. The parameters will be add to an array formated like this :</p>
+<pre class="highlight"><code class="language-php linenums">    $message = array();
+    $message['batchId']=$batchId;
+    $message['operationId']=$operation-&gt;getId();
+    $message['type']=$type;
+    $message['action']=$action;</code></pre>
+
+<p>This message will then be publish to rabbitMQ, using the right queue, determine with the type and the action</p>
+<h2 id="execute-actions">Execute actions</h2>
+<p>We automatically create consumers connected to all our queues.
+You have to add the consumers to your supervisord.</p>
+<p>Consumers will get a message, and laucnh the <code>execute(AMQPMessage $msg)</code>.</p>
+<p>The message will be unserialized, and the operation will be executed. Following the given action, the create or the delete method will be used.</p>
+<h2 id="update-batchoperation-status">Update batch/operation status</h2>
+<p>During the process of the excution of the producers, we dispatch some events
+* WELP_BATCH_OPERATION_STARTED
+* WELP_BATCH_OPERATION_FINISHED
+* WELP_BATCH_OPERATION_ERROR</p>
+<p>Events are listened in the <code>OperationListener.php</code>.</p>
+<p>When the <code>WELP_BATCH_OPERATION_STARTED</code> event is raised, we update the status of the operation, and if necessary, the status of the batch.</p>
+<p>When the <code>WELP_BATCH_OPERATION_ERROR</code> event is raised, we update the status of the operation, and we add the code and the message of the error in the error array.</p>
+<p>When the <code>WELP_BATCH_OPERATION_FINISHED</code> event is raised, we update the status of the operation. If all operations are finished, we update the status of the batch, and we merge all errors in the batch error array.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../api/" class="btn btn-neutral" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>MIT</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/welpdev/batchoperation-bundle" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../api/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>
