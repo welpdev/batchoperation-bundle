@@ -1,6 +1,6 @@
 <?php
 
-namespace Welp\BatchBundle\Controller;
+namespace Welp\BatchBundle\Api\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
