@@ -1,6 +1,6 @@
 # WelpBatchBundle
 
-Symfony Bundle to manage batch operation. You can choose whatever broker you want ( default is RabbitMq)
+Symfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)
 
 ## Full Documentation
 

@@ -1,17 +1,7 @@
-# Welcome to MkDocs
+# WelpBatchBundle
 
-For full documentation visit [mkdocs.org](http://mkdocs.org).
+Symfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)
 
-## Commands
+## Full Documentation
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs help` - Print this help message.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+you can find the full documentation at <https://welpdev.github.io/batchoperation-bundle/>
