@@ -77,9 +77,11 @@
                 
                     <li><a class="toctree-l4" href="#principe">Principe</a></li>
                 
-                    <li><a class="toctree-l4" href="#required-parameters">Required parameters</a></li>
+                    <li><a class="toctree-l4" href="#batches">Batches</a></li>
                 
-                    <li><a class="toctree-l4" href="#available-routes">Available routes</a></li>
+                    <li><a class="toctree-l4" href="#results">Results</a></li>
+                
+                    <li><a class="toctree-l4" href="#ressources">Ressources</a></li>
                 
             
             </ul>
@@ -89,7 +91,7 @@
           
             <li>
     <li class="toctree-l1 ">
-        <a class="" href="../usage/">Usage</a>
+        <a class="" href="../explanation/">Explanation</a>
         
     </li>
 <li>
@@ -133,37 +135,175 @@
 <h2 id="principe">Principe</h2>
 <p>This bundle provide a create method.
 When using our REST Controller, you have to call the POST /batches with a json like this</p>
+<h2 id="batches">Batches</h2>
+<h3 id="post">POST</h3>
+<p>Note : All operations have to have those 3 parameters (type, action, payload)</p>
+<h4 id="route">Route</h4>
+<p>POST /batches</p>
+<h4 id="request-parameters">Request parameters</h4>
 <pre class="highlight"><code class="language-json linenums">{
     &quot;operations&quot;:[{
         &quot;type&quot;:&quot;need&quot;,
         &quot;action&quot;:&quot;create&quot;,
-        &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
-        &quot;description&quot;:&quot;le test du batch du need2&quot;,
-        &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
-        &quot;category&quot;:11,
-        &quot;author&quot;:2
+        &quot;payload&quot;:{
+            &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
+            &quot;description&quot;:&quot;le test du batch du need2&quot;,
+            &quot;title&quot;:&quot;le test du batch du need2&quot;,
+            &quot;category&quot;:11,
+            &quot;author&quot;:2
+        }
     },{
-        &quot;type&quot;:&quot;need&quot;,
+        &quot;type&quot;:&quot;proposition&quot;,
         &quot;action&quot;:&quot;create&quot;,
-        &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
-        &quot;description&quot;:&quot;le test du batch du need2&quot;,
-        &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
-        &quot;category&quot;:11,
-        &quot;author&quot;:2
+        &quot;payload&quot;:{
+            &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
+            &quot;description&quot;:&quot;le test du batch du need2&quot;,
+            &quot;title&quot;:&quot;le test du batch du need2&quot;,
+            &quot;category&quot;:11,
+            &quot;author&quot;:2
+        }
     }]
 }</code></pre>
 
-<h2 id="required-parameters">Required parameters</h2>
-<p>For each operation, you have to give the following required parameters are
-* Type =&gt; it must be a manage_entity
-* Action =&gt; create/delete. it must be in the action array in your manage_entity
-* Remainning parameters =&gt; contains all the data you need to create/delete an entity</p>
-<h2 id="available-routes">Available routes</h2>
-<ul>
-<li>Batch : GET /batches/{id}, POST /batches, DELETE /batches/{id}</li>
-<li>Operation : GET /operations/{id}</li>
-</ul>
-<p>For more detailled options for these routes, you can use nelmioApiDocBundle. our routes are commented, and you will find the documentation.</p>
+<h4 id="response">Response</h4>
+<pre class="highlight"><code class="language-json linenums">{
+  &quot;success&quot;: true,
+  &quot;batch&quot;: {
+    &quot;id&quot;: 43,
+    &quot;status&quot;: &quot;welp_batch_pending&quot;,
+    &quot;operations&quot;: [
+      {
+        &quot;type&quot;: &quot;need&quot;,
+        &quot;action&quot;: &quot;create&quot;,
+        &quot;payload&quot;: {
+          &quot;place&quot;: {
+            &quot;searchedBy&quot;: &quot;route&quot;,
+            &quot;route&quot;: &quot;Rue de Dunkerque&quot;,
+            &quot;locality&quot;: &quot;Paris&quot;,
+            &quot;administrativeArealevel1&quot;: &quot;Île-de-France&quot;,
+            &quot;country&quot;: &quot;France&quot;,
+            &quot;name&quot;: &quot;Rue de Dunkerque, Paris, France&quot;,
+            &quot;latitude&quot;: 48.8807242,
+            &quot;longitude&quot;: 2.3516483999999
+          },
+          &quot;description&quot;: &quot;le test du batch du need2&quot;,
+          &quot;title&quot;: &quot;le test du batch du need2&quot;,
+          &quot;category&quot;: 11,
+          &quot;author&quot;: 2
+        },
+        &quot;operationId&quot;: 1
+      },
+      {
+        &quot;type&quot;: &quot;proposition&quot;,
+        &quot;action&quot;: &quot;create&quot;,
+        &quot;payload&quot;: {
+          &quot;place&quot;: {
+            &quot;searchedBy&quot;: &quot;route&quot;,
+            &quot;route&quot;: &quot;Rue de Dunkerque&quot;,
+            &quot;locality&quot;: &quot;Paris&quot;,
+            &quot;administrativeArealevel1&quot;: &quot;Île-de-France&quot;,
+            &quot;country&quot;: &quot;France&quot;,
+            &quot;name&quot;: &quot;Rue de Dunkerque, Paris, France&quot;,
+            &quot;latitude&quot;: 48.8807242,
+            &quot;longitude&quot;: 2.3516483999999
+          },
+          &quot;description&quot;: &quot;le test du batch du need2&quot;,
+          &quot;title&quot;: &quot;le test du batch du need2&quot;,
+          &quot;category&quot;: 11,
+          &quot;author&quot;: 2
+        },
+        &quot;operationId&quot;: 2
+      }
+    ],
+    &quot;total_operations&quot;: 2,
+    &quot;total_executed_operations&quot;: 0,
+    &quot;created_at&quot;: &quot;2017-02-21T18:26:46+0100&quot;,
+    &quot;updated_at&quot;: &quot;2017-02-21T18:26:46+0100&quot;
+  }
+}</code></pre>
+
+<h3 id="get">GET</h3>
+<h4 id="route_1">Route</h4>
+<p>GET /batches/{id}</p>
+<h4 id="response_1">Response</h4>
+<pre class="highlight"><code class="language-json linenums">{
+  &quot;success&quot;: true,
+  &quot;batch&quot;: {
+    &quot;id&quot;: 43,
+    &quot;status&quot;: &quot;welp_batch_pending&quot;,
+    &quot;operations&quot;: [
+      {
+        &quot;type&quot;: &quot;need&quot;,
+        &quot;action&quot;: &quot;create&quot;,
+        &quot;payload&quot;: {
+          &quot;place&quot;: {
+            &quot;searchedBy&quot;: &quot;route&quot;,
+            &quot;route&quot;: &quot;Rue de Dunkerque&quot;,
+            &quot;locality&quot;: &quot;Paris&quot;,
+            &quot;administrativeArealevel1&quot;: &quot;Île-de-France&quot;,
+            &quot;country&quot;: &quot;France&quot;,
+            &quot;name&quot;: &quot;Rue de Dunkerque, Paris, France&quot;,
+            &quot;latitude&quot;: 48.8807242,
+            &quot;longitude&quot;: 2.3516483999999
+          },
+          &quot;description&quot;: &quot;le test du batch du need2&quot;,
+          &quot;title&quot;: &quot;le test du batch du need2&quot;,
+          &quot;category&quot;: 11,
+          &quot;authovdfvdfvdfvvvdvdsvdfsdfr&quot;: 2
+        },
+        &quot;operationId&quot;: 1
+      },
+      {
+        &quot;type&quot;: &quot;need&quot;,
+        &quot;action&quot;: &quot;create&quot;,
+        &quot;payload&quot;: {
+          &quot;place&quot;: {
+            &quot;searchedBy&quot;: &quot;route&quot;,
+            &quot;route&quot;: &quot;Rue de Dunkerque&quot;,
+            &quot;locality&quot;: &quot;Paris&quot;,
+            &quot;administrativeArealevel1&quot;: &quot;Île-de-France&quot;,
+            &quot;country&quot;: &quot;France&quot;,
+            &quot;name&quot;: &quot;Rue de Dunkerque, Paris, France&quot;,
+            &quot;latitude&quot;: 48.8807242,
+            &quot;longitude&quot;: 2.3516483999999
+          },
+          &quot;description&quot;: &quot;le test du batch du need2&quot;,
+          &quot;title&quot;: &quot;le test du batch du need2&quot;,
+          &quot;category&quot;: 11,
+          &quot;author&quot;: 2
+        },
+        &quot;operationId&quot;: 2
+      }
+    ],
+    &quot;total_operations&quot;: 2,
+    &quot;total_executed_operations&quot;: 0,
+    &quot;created_at&quot;: &quot;2017-02-21T18:26:46+0100&quot;,
+    &quot;updated_at&quot;: &quot;2017-02-21T18:26:46+0100&quot;
+  }
+}</code></pre>
+
+<h3 id="delete">DELETE</h3>
+<h4 id="route_2">Route</h4>
+<p>DELETE /batches/{id}</p>
+<h4 id="response_2">Response</h4>
+<pre class="highlight"><code class="language-json linenums">{
+  &quot;success&quot;: true,
+  &quot;message&quot;: &quot;batch deleted&quot;
+}</code></pre>
+
+<h2 id="results">Results</h2>
+<p>This route is dedicated to get the results from a given batch.</p>
+<h3 id="get_1">GET</h3>
+<h4 id="route_3">ROUTE</h4>
+<p>GET /batches/{id}/results</p>
+<h4 id="response_3">Response</h4>
+<pre class="highlight"><code class="language-json linenums">{
+  &quot;success&quot;: true,
+  &quot;file&quot;: &quot;[{\&quot;operationId\&quot;:1,\&quot;error\&quot;:true,\&quot;text\&quot;:\&quot;Form Error, check yout payload\&quot;},{\&quot;operationId\&quot;:2,\&quot;error\&quot;:false,\&quot;message\&quot;:\&quot;operation OK\&quot;}]&quot;
+}</code></pre>
+
+<h2 id="ressources">Ressources</h2>
+<p>We also provide embedded documentation with NelmioApiDocBundle. If you use it, a Batches Section will automatically be imported to your documentation</p>
               
             </div>
           </div>
@@ -171,7 +311,7 @@ When using our REST Controller, you have to call the POST /batches with a json l
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../usage/" class="btn btn-neutral float-right" title="Usage">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../explanation/" class="btn btn-neutral float-right" title="Explanation">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../configuration/" class="btn btn-neutral" title="Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -207,7 +347,7 @@ When using our REST Controller, you have to call the POST /batches with a json l
         <span><a href="../configuration/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../explanation/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

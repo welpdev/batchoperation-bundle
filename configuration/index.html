@@ -68,7 +68,9 @@
             
                 <li class="toctree-l3"><a href="#configuration">Configuration</a></li>
                 
-                    <li><a class="toctree-l4" href="#manage_entitites-explanation">manage_entitites explanation</a></li>
+                    <li><a class="toctree-l4" href="#full-configuration">Full Configuration</a></li>
+                
+                    <li><a class="toctree-l4" href="#manage_entitites-explanation">Manage_entitites explanation</a></li>
                 
             
             </ul>
@@ -85,7 +87,7 @@
           
             <li>
     <li class="toctree-l1 ">
-        <a class="" href="../usage/">Usage</a>
+        <a class="" href="../explanation/">Explanation</a>
         
     </li>
 <li>
@@ -127,26 +129,28 @@
               
                 <h1 id="configuration">Configuration</h1>
 <p>In your <code>config.yml</code>:</p>
+<h2 id="full-configuration">Full Configuration</h2>
 <pre class="highlight"><code class="language-yaml linenums">welp_batch:
     entity_manager: doctrine.orm.entity_manager #name of the entity manager service
     broker_type: rabbitmq #type of the broker
     broker_connection: default #name of the connection to the broker
-    batch_entity: #entity which extends the batc/operation Model
-        batch: AppBundle\Entity\Batch
-        operation: AppBundle\Entity\Operation
+    batch_entity: MyBundle\Entity\Batch #entity which extends the batch Model
+    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files
+        batch: MyBundle\Entity\Batch
+        operation: MyBundle\Entity\Operation
     manage_entities: #Batchable entity
         need:
-            entity_name: AppBundle\Entity\Need
-            form_name: ApiBundle\Form\NeedType
+            entity_name: MyBundle\Entity\Need
+            form_name: MyBundle\Form\NeedType
             batch_size: 10
             actions: ['create','delete']
         proposition:
-            entity_name: AppBundle\Entity\Proposition
-            form_name: ApiBundle\Form\PropositionType
+            entity_name: MyBundle\Entity\Proposition
+            form_name: MyBundle\Form\PropositionType
             batch_size: 10
             actions: ['create']</code></pre>
 
-<h2 id="manage_entitites-explanation">manage_entitites explanation</h2>
+<h2 id="manage_entitites-explanation">Manage_entitites explanation</h2>
 <p>You can add as many entities as you like. Each of them must have the following attributes :</p>
 <ul>
 <li>entity_name : full name of the entity</li>

@@ -89,7 +89,7 @@
           
             <li>
     <li class="toctree-l1 ">
-        <a class="" href="../usage/">Usage</a>
+        <a class="" href="../explanation/">Explanation</a>
         
     </li>
 <li>
@@ -141,7 +141,7 @@
 ];</code></pre>
 
 <h2 id="extends-the-models">Extends the models</h2>
-<p>In order to use this bundle, you have to extends our two models : <code>Welp\BatchBundle\Model\Batch</code> and <code>Welp\BatchBundle\Model\Operation</code></p>
+<p>In order to use this bundle, you have to extends our models : <code>Welp\BatchBundle\Model\Batch</code></p>
 <p>Example :</p>
 <pre class="highlight"><code class="language-php linenums">/**
  * @ORM\Entity()
@@ -244,109 +244,6 @@ class Batch extends BaseBatch
      */
     protected $finishedAt;
 }</code></pre>
-
-<pre class="highlight"><code class="language-php linenums">/**
- * @ORM\Entity()
- * @ORM\Table(name=&quot;operation&quot;)
- * @ORM\HasLifecycleCallbacks
- */
-class Operation extends BaseOperation
-{
-
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type=&quot;integer&quot;)
-     * @ORM\GeneratedValue(strategy=&quot;AUTO&quot;)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name=&quot;status&quot;, type=&quot;string&quot;, length=255)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $status;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(name=&quot;errors&quot;, type=&quot;array&quot;)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $errors;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name=&quot;type&quot;, type=&quot;string&quot;, length=255)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $type;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(name=&quot;payload&quot;, type=&quot;array&quot;)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $payload;
-
-    /**
-     * @var Category
-     *
-     * @ORM\ManyToOne(targetEntity=&quot;Batch&quot;, inversedBy=&quot;operations&quot;)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\MaxDepth(1)
-     * @Serializer\Expose
-     */
-    protected $batch;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name=&quot;created_at&quot;, type=&quot;datetime&quot;)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name=&quot;updated_at&quot;, type=&quot;datetime&quot;,nullable=true)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $updatedAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name=&quot;started_at&quot;, type=&quot;datetime&quot;,nullable=true)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $startedAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name=&quot;finished_at&quot;, type=&quot;datetime&quot;,nullable=true)
-     * @Serializer\Groups({&quot;Default&quot;})
-     * @Serializer\Expose
-     */
-    protected $finishedAt;
-}
-</code></pre>
 
 <h2 id="configuration">Configuration</h2>
 <p>take a look <a href="../configuration/">here</a> to configure the bundle</p>

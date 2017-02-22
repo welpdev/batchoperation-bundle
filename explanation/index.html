@@ -8,7 +8,7 @@
   
   <meta name="author" content="Gaetan DELBART">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Usage - WelpBatch Bundle</title>
+  <title>Explanation - WelpBatch Bundle</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Usage";
-    var mkdocs_page_input_path = "usage.md";
-    var mkdocs_page_url = "/usage/";
+    var mkdocs_page_name = "Explanation";
+    var mkdocs_page_input_path = "explanation.md";
+    var mkdocs_page_url = "/explanation/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -76,11 +76,11 @@
           
             <li>
     <li class="toctree-l1 current">
-        <a class="current" href="./">Usage</a>
+        <a class="current" href="./">Explanation</a>
         
             <ul>
             
-                <li class="toctree-l3"><a href="#usage">Usage</a></li>
+                <li class="toctree-l3"><a href="#explanation">Explanation</a></li>
                 
                     <li><a class="toctree-l4" href="#configure-consumersproducers-queue">Configure consumers/producers queue</a></li>
                 
@@ -93,6 +93,8 @@
                     <li><a class="toctree-l4" href="#execute-actions">Execute actions</a></li>
                 
                     <li><a class="toctree-l4" href="#update-batchoperation-status">Update batch/operation status</a></li>
+                
+                    <li><a class="toctree-l4" href="#format-result">Format Result</a></li>
                 
             
             </ul>
@@ -122,10 +124,10 @@
     
       
     
-    <li>Usage</li>
+    <li>Explanation</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/welpdev/batchoperation-bundle/edit/master/docs/usage.md"
+        <a href="https://github.com/welpdev/batchoperation-bundle/edit/master/docs/explanation.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -135,8 +137,8 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="usage">Usage</h1>
-<p>The purpose is to manage a very long list of create/delete for you entity. for this we use these steps</p>
+                <h1 id="explanation">Explanation</h1>
+<p>The purpose is to manage a very long list of create/delete for you entity. For this we follow these steps</p>
 <ol>
 <li>Configure consumers/producers queue</li>
 <li>Call the batch_service with an array of operation</li>
@@ -145,7 +147,7 @@
 <li>The consumer take the message, and execute the given operation.</li>
 </ol>
 <h2 id="configure-consumersproducers-queue">Configure consumers/producers queue</h2>
-<p>We automatically create a couple of producers/consumers for each actions of a manage_entity. if you take this example</p>
+<p>We automatically create a pair of producers/consumers for each actions of a manage_entity. if you take this example</p>
 <pre class="highlight"><code class="language-yaml linenums">    manage_entities: #Batchable entity
         need:
             entity_name: AppBundle\Entity\Need
@@ -158,10 +160,24 @@
             batch_size: 10
             actions: ['create']</code></pre>
 
-<p>it will automatically create queues named
-* welp.batch.need.create
-* welp.batch.need.delete
-* welp.batch.proposition.create</p>
+<p>It will automatically create queues named</p>
+<ul>
+<li>welp.batch.need.create</li>
+<li>welp.batch.need.delete</li>
+<li>welp.batch.proposition.create</li>
+</ul>
+<p>It will create consumer named</p>
+<ul>
+<li>old_sound_rabbit_mq.welp_batch.need.create_consumer</li>
+<li>old_sound_rabbit_mq.welp_batch.need.delete_consumer</li>
+<li>old_sound_rabbit_mq.welp_batch.proposition.create_consumer</li>
+</ul>
+<p>It will create Producer named</p>
+<ul>
+<li>old_sound_rabbit_mq.welp_batch.need.create_producer</li>
+<li>old_sound_rabbit_mq.welp_batch.need.delete_producer</li>
+<li>old_sound_rabbit_mq.welp_batch.proposition.create_producer</li>
+</ul>
 <h2 id="call-the-batch_service">Call the batch_service</h2>
 <p>The service is called <code>welp_batch.batch_service</code>. It is the main entrance to this bundle. You can use it in your controller, or you can use our REST controller.</p>
 <p>This service provide a create method. This method accept an array parameter, which contain all the operations you want to batch.
@@ -170,49 +186,60 @@ When using our REST Controller, you have to call the POST /batches with a json l
     &quot;operations&quot;:[{
         &quot;type&quot;:&quot;need&quot;,
         &quot;action&quot;:&quot;create&quot;,
-        &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
-        &quot;description&quot;:&quot;le test du batch du need2&quot;,
-        &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
-        &quot;category&quot;:11,
-        &quot;author&quot;:2
+        &quot;payload&quot;:{
+            &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
+            &quot;description&quot;:&quot;le test du batch du need2&quot;,
+            &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
+            &quot;category&quot;:11,
+            &quot;author&quot;:2
+        }
+
     },{
         &quot;type&quot;:&quot;need&quot;,
         &quot;action&quot;:&quot;create&quot;,
-        &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
-        &quot;description&quot;:&quot;le test du batch du need2&quot;,
-        &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need2&quot;,
-        &quot;category&quot;:11,
-        &quot;author&quot;:2
+        &quot;payload&quot;:{
+            &quot;place&quot;:{&quot;searchedBy&quot;:&quot;route&quot;,&quot;route&quot;:&quot;Rue de Dunkerque&quot;,&quot;locality&quot;:&quot;Paris&quot;,&quot;administrativeArealevel1&quot;:&quot;Île-de-France&quot;,&quot;country&quot;:&quot;France&quot;,&quot;name&quot;:&quot;Rue de Dunkerque, Paris, France&quot;,&quot;latitude&quot;:48.8807242, &quot;longitude&quot;:2.351648399999931},
+            &quot;description&quot;:&quot;le test du batch du need3&quot;,
+            &quot;titldzdezdezdezddee&quot;:&quot;le test du batch du need3&quot;,
+            &quot;category&quot;:11,
+            &quot;author&quot;:2
+        }
     }]
 }</code></pre>
 
 <h2 id="create-and-save-the-batch">Create and save the batch</h2>
-<p>With this example, it will add 2 operations to the queue welp.batch.need.create
-When the service receive the request, it will create a batch. Then, for each operations (two in the given example), it will create and save operations.
+<p>With this example, it will add 2 operations to the queue <code>welp.batch.need.create</code>
+When the service receive the request, it will create a batch.</p>
+<p>Then, for each operations (two in the given example), it will create and save operations.
 Those operations are transmit to the <code>welp_batch.producer</code> thanks to the <code>produce</code> method</p>
 <h2 id="publish-to-the-broker">Publish to the broker</h2>
-<p>When the <code>produce($operation, $batchId,$type,$action )</code> method is called. The parameters will be add to an array formated like this :</p>
+<p>When the <code>produce($operation, $batchId, $type, $action)</code> method is called. The parameters will be add to an array formated like this :</p>
 <pre class="highlight"><code class="language-php linenums">    $message = array();
     $message['batchId']=$batchId;
     $message['operationId']=$operation-&gt;getId();
+    $message['operationPayload']=$operation-&gt;getPayload()
     $message['type']=$type;
     $message['action']=$action;</code></pre>
 
-<p>This message will then be publish to rabbitMQ, using the right queue, determine with the type and the action</p>
+<p>This message will then be publish to rabbitMQ, using the right queue, determine with the type of the entity and the action</p>
 <h2 id="execute-actions">Execute actions</h2>
 <p>We automatically create consumers connected to all our queues.
-You have to add the consumers to your supervisord.</p>
+You have to add the consumers to your whatever you use to launch command.</p>
 <p>Consumers will get a message, and laucnh the <code>execute(AMQPMessage $msg)</code>.</p>
 <p>The message will be unserialized, and the operation will be executed. Following the given action, the create or the delete method will be used.</p>
 <h2 id="update-batchoperation-status">Update batch/operation status</h2>
-<p>During the process of the excution of the producers, we dispatch some events
-* WELP_BATCH_OPERATION_STARTED
-* WELP_BATCH_OPERATION_FINISHED
-* WELP_BATCH_OPERATION_ERROR</p>
+<p>During the process of the excution of the producers, we dispatch some events</p>
+<ul>
+<li>WELP_BATCH_OPERATION_STARTED</li>
+<li>WELP_BATCH_OPERATION_FINISHED</li>
+<li>WELP_BATCH_OPERATION_ERROR</li>
+</ul>
 <p>Events are listened in the <code>OperationListener.php</code>.</p>
 <p>When the <code>WELP_BATCH_OPERATION_STARTED</code> event is raised, we update the status of the operation, and if necessary, the status of the batch.</p>
 <p>When the <code>WELP_BATCH_OPERATION_ERROR</code> event is raised, we update the status of the operation, and we add the code and the message of the error in the error array.</p>
 <p>When the <code>WELP_BATCH_OPERATION_FINISHED</code> event is raised, we update the status of the operation. If all operations are finished, we update the status of the batch, and we merge all errors in the batch error array.</p>
+<h2 id="format-result">Format Result</h2>
+<p>At the end of a batch, we automatically create a file names results-{batchId}-TodayDate. The file will be created in the given folder, the one you give in your configuration.</p>
               
             </div>
           </div>
