@@ -10,6 +10,9 @@ use Welp\BatchBundle\Model\Batch;
 use Welp\BatchBundle\Manager\ManagerInterface as BaseManager;
 use Welp\BatchBundle\Model\BatchInterface;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+
 /**
  * batch manager
  */
@@ -37,16 +40,22 @@ class BatchManager implements BaseManager
 
     /**
      *
+     * @var String
+     */
+    private $folderName;
+
+    /**
+     *
      * @param String $entityManager name of the entitytyManager service
      * @param ContainerInterface $container
      * @param String $className     Name of the class that extends our batchModel
      */
-    public function __construct($entityManager, $container, $className)
+    public function __construct($entityManager, $container, $className, $folderName)
     {
         $this->container = $container;
         $this->entityManager = $this->container->get($entityManager);
         $this->repository = $this->entityManager->getRepository($className);
-        //$metadata = $this->entityManager->getClassMetadata($className);
+        $this->folderName = $folderName;
         $this->class = $className;
     }
 
@@ -111,10 +120,16 @@ class BatchManager implements BaseManager
      * @param  BatchInterface $batch
      * @return JsonSerializable
      */
-    public function generateResults($batch)
+    public function generateResults($batch, $fileName='')
     {
         $today = new \DateTime();
-        $fileName = $this->container->getParam('welp_batch.batch_results_folder').'results-'.$batch->getId().'-'.$today->format('Y-m-d\TH-i-s');
+
+        if ($fileName == '') {
+            $fileName = $this->folderName.'results-'.$batch->getId().'-'.$today->format('Y-m-d\TH-i-s');
+        } else {
+            $fileName= $this->folderName.$fileName;
+        }
+
         $arrayResponses = array();
 
         foreach ($batch->getOperations() as $operation) {
@@ -133,10 +148,15 @@ class BatchManager implements BaseManager
 
             $arrayResponses[] = $result;
         }
+        $content = json_encode($arrayResponses);
+        $fs = new Filesystem();
 
-        file_put_contents($fileName, json_encode($arrayResponses));
+        if (!$fs->exists($this->folderName)) {
+            $fs->mkDir($this->folderName);
+        }
 
-        return json_encode($arrayResponses);
+        //$fs->dumpFile($fileName, $content);
+        return $content;
     }
 
     /**
@@ -147,15 +167,21 @@ class BatchManager implements BaseManager
     public function getResultFile($id)
     {
         $batch = $this->repository->findOneById($id);
-        $filenameGlob = $fileName = $this->container->getParam('welp_batch.batch_results_folder').'results-'.$batch->getId().'-*';
 
-        $files = glob($filenameGlob);
+        $finder = new Finder();
+
+        $filenameTemp = $this->folderName.'results-'.$batch->getId().'-*';
+
+        $files = iterator_to_array($finder->files()->in($filenameTemp));
         $content = "";
-        if (count($files) > 0) {
-            $content = file_get_contents(end($files));
+
+        if (count($files)> 0) {
+            $file = end($files);
+            $content = $file->getContents();
         } else {
-            $content = $this->generateResults($batch); // the files don't exist, we regenerate it.
+            $content = $this->generateResults($batch);
         }
+
         $content = $content;
         return $content;
     }
