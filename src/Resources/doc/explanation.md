@@ -129,3 +129,7 @@ When the `WELP_BATCH_OPERATION_STARTED` event is raised, we update the status of
 When the `WELP_BATCH_OPERATION_ERROR` event is raised, we update the status of the operation, and we add the code and the message of the error in the error array.
 
 When the `WELP_BATCH_OPERATION_FINISHED` event is raised, we update the status of the operation. If all operations are finished, we update the status of the batch, and we merge all errors in the batch error array.
+
+## Format Result
+
+At the end of a batch, we automatically create a file names results-{batchId}-TodayDate. The file will be created in the given folder, the one you give in your configuration.
