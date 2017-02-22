@@ -97,16 +97,4 @@ class BatchService
 
         return $batch;
     }
-
-    /**
-     * Get a batch with the given Id
-     * @param  integer $id
-     * @return BatchInterface
-     */
-    public function get($id)
-    {
-        $batch = $this->batchRepository->findOneById($id);
-
-        return $batch;
-    }
 }
