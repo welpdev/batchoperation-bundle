@@ -10,11 +10,33 @@ use Welp\BatchBundle\Manager\ManagerInterface as BaseManager;
  */
 class OperationManager implements BaseManager
 {
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
+
+    /**
+     * @var ContainerInterface
+     */
     private $container;
+
+    /**
+     * @var EntityRepository
+     */
     private $repository;
+
+    /**
+     * @var String
+     */
     private $class;
 
+
+    /**
+     *
+     * @param String $entityManager name of the entitytyManager service
+     * @param ContainerInterface $container
+     * @param String $className     Name of the class that extends our batchModel
+     */
     public function __construct($entityManager, $container, $className)
     {
         $this->container = $container;
@@ -25,6 +47,9 @@ class OperationManager implements BaseManager
         $this->class = "Welp\BatchBundle\Model\Operation";
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function createNew()
     {
         $operation = new $this->class();

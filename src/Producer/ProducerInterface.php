@@ -3,7 +3,7 @@
 namespace Welp\BatchBundle\Producer;
 
 /**
- * batch Factory
+ * Producer interface
  */
 interface ProducerInterface
 {

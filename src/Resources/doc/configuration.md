@@ -7,7 +7,7 @@ welp_batch:
     entity_manager: doctrine.orm.entity_manager #name of the entity manager service
     broker_type: rabbitmq #type of the broker
     broker_connection: default #name of the connection to the broker
-    batch_entity: #entity which extends the batc/operation Model
+    batch_entity: #entity which extends the batch/operation Model
         batch: AppBundle\Entity\Batch
         operation: AppBundle\Entity\Operation
     manage_entities: #Batchable entity

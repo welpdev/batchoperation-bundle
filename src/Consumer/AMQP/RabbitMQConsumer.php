@@ -2,8 +2,11 @@
 
 namespace Welp\BatchBundle\Consumer\AMQP;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Welp\BatchBundle\WelpBatchEvent;
 use Welp\BatchBundle\Event\BatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
@@ -11,15 +14,44 @@ use Welp\BatchBundle\Event\BatchErrorEvent;
 use Welp\BatchBundle\Event\OperationErrorEvent;
 use Welp\BatchBundle\Exception\BatchException;
 use Welp\BatchBundle\Exception\OperationException;
+use Welp\BatchBundle\Model\BatchInterface;
 
+/**
+ * WelpBatch Consumer class when using the rabbitMQ broker Type
+ */
 class RabbitMQConsumer implements ConsumerInterface
 {
+    /**
+     * @var ContainerAwareInterface $container
+     */
     private $container;
+    /**
+     * @var String $className
+     */
     private $className;
+
+    /**
+     * @var String $form
+     */
     private $form;
+
+    /**
+     * @var EntityManager $entityManager
+     */
     private $entityManager;
+
+    /**
+     * @var EntityRepository $repository
+     */
     private $repository;
 
+    /**
+     * COnstructor of the consumer. This function is called when initializing the service
+     * @param ContainerAwareInterface $container     Service Container
+     * @param String $className     Fullname of the class the operation will create
+     * @param String $form          Fullname of the form class to use for binding data to the new entity
+     * @param String $entityManager Name of the entityManager service
+     */
     public function __construct($container, $className, $form, $entityManager)
     {
         $this->container = $container;
@@ -29,6 +61,11 @@ class RabbitMQConsumer implements ConsumerInterface
         $this->repository = $this->entityManager->getRepository($className);
     }
 
+    /**
+     * Execute function. This one is launch when the consumer is launched
+     * @param  AMQPMessage $msg message receive from RabbitMQ
+     * @return Bool           true if sucess, false otherwise
+     */
     public function execute(AMQPMessage $msg)
     {
         $temp = unserialize($msg->body);
@@ -53,7 +90,11 @@ class RabbitMQConsumer implements ConsumerInterface
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
     }
 
-
+    /**
+     * Function use to create an entity
+     * @param  array $operationPayload Payload containing the parameters to bind the new entity
+     * @param  BatchInterface $batch            Batch containing the current operation
+     */
     public function create($operationPayload, $batch)
     {
         $entity = new $this->className();
@@ -68,6 +109,11 @@ class RabbitMQConsumer implements ConsumerInterface
         $this->entityManager->flush();
     }
 
+    /**
+     * Function use to delete an entity
+     * @param  array $operationPayload Payload containing the parameters to delete the entity
+     * @param  BatchInterface $batch            Batch containing the current operation
+     */
     public function delete($operationPayload, $batch)
     {
         $id = $operationPayload['id'];

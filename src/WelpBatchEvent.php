@@ -3,7 +3,7 @@
 namespace Welp\BatchBundle;
 
 /**
- *
+ * Event in Welp\BatchBundle
  */
 final class WelpBatchEvent
 {

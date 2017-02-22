@@ -2,19 +2,49 @@
 
 namespace Welp\BatchBundle\Service;
 
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Welp\BatchBundle\Manager\BatchManager;
+use Welp\BatchBundle\Manager\OperationManager;
 use Welp\BatchBundle\Model\Batch;
 use Welp\BatchBundle\Model\Operation;
+use Welp\BatchBundle\Model\BatchInterface;
 
 /**
- * batch Factory
+ * batch Service
  */
 class BatchService
 {
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
+
+    /**
+     *
+     * @var ContainerInterface
+     */
     private $container;
+
+    /**
+     *
+     * @var OperationManager
+     */
     private $operationManager;
+
+    /**
+     *
+     * @var BatchManager
+     */
     private $batchManager;
 
+    /**
+     *
+     * @param String $entityManager    Name of the entityManager service
+     * @param ContainerInterface $container
+     * @param BatchManager $batchManager
+     * @param OperationManager $operationManager
+     */
     public function __construct($entityManager, $container, $batchManager, $operationManager)
     {
         $this->container = $container;
@@ -24,7 +54,10 @@ class BatchService
     }
 
     /**
-     * {@inheritdoc}
+     * This method is used to create a new batch with an array of operations.
+     * It will create the batch, and then, create all the message to the given broker.
+     * @param  array  $operations [description]
+     * @return [type]             [description]
      */
     public function create(array $operations)
     {
@@ -34,8 +67,6 @@ class BatchService
                 throw new \Exception('all rows must have a "type" key');
             }
         }
-
-
 
         $batch = $this->batchManager->createNew();
         $batch->setStatus(Batch::STATUS_PENDING);
@@ -60,7 +91,6 @@ class BatchService
             $batch->addOperations($ope);
             $this->operationManager->create($operation);
             $this->container->get('welp_batch.producer')->produce($operation, $batch->getId(), $type, $action);
-
         }
         $this->batchManager->update($batch);
 
@@ -69,39 +99,14 @@ class BatchService
     }
 
     /**
-     * {@inheritdoc}
+     * Get a batch with the given Id
+     * @param  integer $id
+     * @return BatchInterface
      */
     public function get($id)
     {
         $batch = $this->batchRepository->findOneById($id);
 
         return $batch;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function update($id, $errors)
-    {
-        $batch = $this->batchRepository->findOneById($id);
-
-        $totalOperations = $batch->getTotalOperations();
-        $totalExecutedOperations = $batch->getTotalExecutedOperations();
-
-        $totalExecutedOperations+=1;
-        $batch->setTotalExecutedOperations($totalExecutedOperations);
-        if (count($errors)>0) {
-            $errors['id_operation']= $totalExecutedOperations;
-            $batch->addError($errors);
-        }
-
-        if ($totalOperations <= $totalExecutedOperations) {
-            $batch->setStatus(Batch::STATUS_FINISHED);
-        } else {
-            $batch->setStatus(Batch::STATUS_ACTIVE);
-        }
-
-        $this->entityManager->persist($batch);
-        $this->entityManager->flush();
     }
 }

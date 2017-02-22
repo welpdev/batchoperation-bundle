@@ -2,16 +2,34 @@
 
 namespace Welp\BatchBundle\Model\Traits;
 
+use DateTime;
+
 /**
  */
 trait TimeStampableTrait
 {
+    /**
+     *
+     * @var DateTime
+     */
     protected $createdAt;
 
+    /**
+     *
+     * @var DateTime
+     */
     protected $updatedAt;
 
+    /**
+     *
+     * @var DateTime
+     */
     protected $startedAt;
 
+    /**
+     *
+     * @var DateTime
+     */
     protected $finishedAt;
 
     /**

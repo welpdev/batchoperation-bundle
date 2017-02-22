@@ -62,6 +62,11 @@ class WelpBatchExtension extends Extension
         return 'welp_batch';
     }
 
+    /**
+     * This function create rabbitMQ Producer automatically. It use the manage_entity in the config to set up the consumer
+     * @param  array  $managedEntity  Manage entity from configuration
+     * @param  string $connectionName Connection name of the rabbitMQ connection (get from the configuration)
+     */
     public function loadRMQProducerDynamically(array $managedEntity, $connectionName)
     {
         foreach ($managedEntity as $key => $entity) { // for each entity, we create a new producer
@@ -86,6 +91,11 @@ class WelpBatchExtension extends Extension
         }
     }
 
+    /**
+     * This function create rabbitMQ Consumer automatically. It use the manage_entity in the config to set up the consumer
+     * @param  array  $managedEntity  Manage entity from configuration
+     * @param  string $connectionName Connection name of the rabbitMQ connection (get from the configuration)
+     */
     public function loadRMQConsumerDynamically(array $managedEntity, $connectionName)
     {
         foreach ($managedEntity as $key => $entity) {
@@ -125,6 +135,12 @@ class WelpBatchExtension extends Extension
         }
     }
 
+    /**
+     * This function create consumer service. This service will be used by the rabbitMQ consumer
+     * @param  string $name   name of the service (it will be prefixed by welp.batch)
+     * @param  array $entity entity(found in configuration)
+     * @return String         Name of the service
+     */
     public function createConsumerService($name, $entity)
     {
         $definition = new Definition('Welp\BatchBundle\Consumer\AMQP\RabbitMQConsumer', array(new Reference('service_container'),$entity['entity_name'],$entity['form_name'],'%welp_batch.entity_manager%'));
@@ -136,6 +152,8 @@ class WelpBatchExtension extends Extension
     /**
      * Symfony 2 converts '-' to '_' when defined in the configuration. This leads to problems when using x-ha-policy
      * parameter. So we revert the change for right configurations.
+     *
+     * Credit to php-amqplib/RabbitMqBundle for this method
      *
      * @param array $config
      *
@@ -163,6 +181,8 @@ class WelpBatchExtension extends Extension
 
     /**
      * Add proper dequeuer aware call
+     *
+     * Credit to php-amqplib/RabbitMqBundle for this method
      *
      * @param string $callback
      * @param string $name

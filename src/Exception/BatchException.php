@@ -3,14 +3,14 @@
 namespace Welp\BatchBundle\Exception;
 
 use Exception;
-use Welp\BatchBundle\Model\Operation;
+use Welp\BatchBundle\Model\Batch;
 use Welp\BatchBundle\Model\BatchInterface;
 
 class BatchException extends \Exception
 {
 
     /**
-     * @var Operation
+     * @var Batch
      */
     private $batch;
 
@@ -27,7 +27,7 @@ class BatchException extends \Exception
     }
 
     /**
-     * @return Need
+     * @return Batch
      */
     public function getEntity()
     {
