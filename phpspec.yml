@@ -1,0 +1,4 @@
+suites:
+    default:
+        namespace: Welp\BatchBundle
+        psr4_prefix: Welp\BatchBundle

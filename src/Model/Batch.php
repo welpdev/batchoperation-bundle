@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Welp\BatchBundle\Model\Traits\TimeStampableTrait;
 
-abstract class Batch implements BatchInterface
+class Batch implements BatchInterface
 {
     use TimeStampableTrait;
 
@@ -138,10 +138,10 @@ abstract class Batch implements BatchInterface
      */
     public function getErrors()
     {
-        if($this->errors == null){
+        if ($this->errors == null) {
             return array();
         }
-        
+
         return $this->errors;
     }
 

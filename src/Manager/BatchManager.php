@@ -93,6 +93,8 @@ class BatchManager implements BaseManager
         //dump($entity);die();
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
+
+        return $entity;
     }
 
     /**
@@ -112,7 +114,7 @@ class BatchManager implements BaseManager
     public function generateResults($batch)
     {
         $today = new \DateTime();
-        $fileName = $this->container->getParameter('welp_batch.batch_results_folder').'results-'.$batch->getId().'-'.$today->format('Y-m-d\TH-i-s');
+        $fileName = $this->container->getParam('welp_batch.batch_results_folder').'results-'.$batch->getId().'-'.$today->format('Y-m-d\TH-i-s');
         $arrayResponses = array();
 
         foreach ($batch->getOperations() as $operation) {
@@ -145,7 +147,7 @@ class BatchManager implements BaseManager
     public function getResultFile($id)
     {
         $batch = $this->repository->findOneById($id);
-        $filenameGlob = $fileName = $this->container->getParameter('welp_batch.batch_results_folder').'results-'.$batch->getId().'-*';
+        $filenameGlob = $fileName = $this->container->getParam('welp_batch.batch_results_folder').'results-'.$batch->getId().'-*';
 
         $files = glob($filenameGlob);
         $content = "";
