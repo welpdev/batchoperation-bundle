@@ -2,28 +2,31 @@
 
 In your `config.yml`:
 
+## Full Configuration
+
 ```yaml
 welp_batch:
     entity_manager: doctrine.orm.entity_manager #name of the entity manager service
     broker_type: rabbitmq #type of the broker
     broker_connection: default #name of the connection to the broker
-    batch_entity: #entity which extends the batch/operation Model
-        batch: AppBundle\Entity\Batch
-        operation: AppBundle\Entity\Operation
+    batch_entity: MyBundle\Entity\Batch #entity which extends the batch Model
+    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files
+        batch: MyBundle\Entity\Batch
+        operation: MyBundle\Entity\Operation
     manage_entities: #Batchable entity
         need:
-            entity_name: AppBundle\Entity\Need
-            form_name: ApiBundle\Form\NeedType
+            entity_name: MyBundle\Entity\Need
+            form_name: MyBundle\Form\NeedType
             batch_size: 10
             actions: ['create','delete']
         proposition:
-            entity_name: AppBundle\Entity\Proposition
-            form_name: ApiBundle\Form\PropositionType
+            entity_name: MyBundle\Entity\Proposition
+            form_name: MyBundle\Form\PropositionType
             batch_size: 10
             actions: ['create']
 ```
 
-## manage_entitites explanation
+## Manage_entitites explanation
 
 You can add as many entities as you like. Each of them must have the following attributes :
 

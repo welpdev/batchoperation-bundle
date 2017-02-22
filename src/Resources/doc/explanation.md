@@ -1,6 +1,6 @@
-# Usage
+# Explanation
 
-The purpose is to manage a very long list of create/delete for you entity. for this we use these steps
+The purpose is to manage a very long list of create/delete for you entity. For this we follow these steps
 
 1. Configure consumers/producers queue
 2. Call the batch_service with an array of operation
@@ -10,7 +10,7 @@ The purpose is to manage a very long list of create/delete for you entity. for t
 
 ## Configure consumers/producers queue
 
-We automatically create a couple of producers/consumers for each actions of a manage_entity. if you take this example
+We automatically create a pair of producers/consumers for each actions of a manage_entity. if you take this example
 
 ```yaml
     manage_entities: #Batchable entity
@@ -26,10 +26,24 @@ We automatically create a couple of producers/consumers for each actions of a ma
             actions: ['create']
 ```
 
-it will automatically create queues named
+It will automatically create queues named
+
 * welp.batch.need.create
 * welp.batch.need.delete
 * welp.batch.proposition.create
+
+It will create consumer named
+
+* old_sound_rabbit_mq.welp_batch.need.create_consumer
+* old_sound_rabbit_mq.welp_batch.need.delete_consumer
+* old_sound_rabbit_mq.welp_batch.proposition.create_consumer
+
+It will create Producer named
+
+* old_sound_rabbit_mq.welp_batch.need.create_producer
+* old_sound_rabbit_mq.welp_batch.need.delete_producer
+* old_sound_rabbit_mq.welp_batch.proposition.create_producer
+
 
 ## Call the batch_service
 
@@ -43,50 +57,57 @@ When using our REST Controller, you have to call the POST /batches with a json l
     "operations":[{
         "type":"need",
         "action":"create",
-        "place":{"searchedBy":"route","route":"Rue de Dunkerque","locality":"Paris","administrativeArealevel1":"Île-de-France","country":"France","name":"Rue de Dunkerque, Paris, France","latitude":48.8807242, "longitude":2.351648399999931},
-        "description":"le test du batch du need2",
-        "titldzdezdezdezddee":"le test du batch du need2",
-        "category":11,
-        "author":2
+        "payload":{
+            "place":{"searchedBy":"route","route":"Rue de Dunkerque","locality":"Paris","administrativeArealevel1":"Île-de-France","country":"France","name":"Rue de Dunkerque, Paris, France","latitude":48.8807242, "longitude":2.351648399999931},
+            "description":"le test du batch du need2",
+            "titldzdezdezdezddee":"le test du batch du need2",
+            "category":11,
+            "author":2
+        }
+
     },{
         "type":"need",
         "action":"create",
-        "place":{"searchedBy":"route","route":"Rue de Dunkerque","locality":"Paris","administrativeArealevel1":"Île-de-France","country":"France","name":"Rue de Dunkerque, Paris, France","latitude":48.8807242, "longitude":2.351648399999931},
-        "description":"le test du batch du need2",
-        "titldzdezdezdezddee":"le test du batch du need2",
-        "category":11,
-        "author":2
+        "payload":{
+            "place":{"searchedBy":"route","route":"Rue de Dunkerque","locality":"Paris","administrativeArealevel1":"Île-de-France","country":"France","name":"Rue de Dunkerque, Paris, France","latitude":48.8807242, "longitude":2.351648399999931},
+            "description":"le test du batch du need3",
+            "titldzdezdezdezddee":"le test du batch du need3",
+            "category":11,
+            "author":2
+        }
     }]
 }
 ```
 
 
-
 ## Create and save the batch
 
-With this example, it will add 2 operations to the queue welp.batch.need.create
-When the service receive the request, it will create a batch. Then, for each operations (two in the given example), it will create and save operations.
+With this example, it will add 2 operations to the queue `welp.batch.need.create`
+When the service receive the request, it will create a batch.
+
+Then, for each operations (two in the given example), it will create and save operations.
 Those operations are transmit to the `welp_batch.producer` thanks to the `produce` method
 
 ## Publish to the broker
 
-When the `produce($operation, $batchId,$type,$action )` method is called. The parameters will be add to an array formated like this :
+When the `produce($operation, $batchId, $type, $action)` method is called. The parameters will be add to an array formated like this :
 
 ```php
     $message = array();
     $message['batchId']=$batchId;
     $message['operationId']=$operation->getId();
+    $message['operationPayload']=$operation->getPayload()
     $message['type']=$type;
     $message['action']=$action;
 ```
 
-This message will then be publish to rabbitMQ, using the right queue, determine with the type and the action
+This message will then be publish to rabbitMQ, using the right queue, determine with the type of the entity and the action
 
 
 ## Execute actions
 
 We automatically create consumers connected to all our queues.
-You have to add the consumers to your supervisord.
+You have to add the consumers to your whatever you use to launch command.
 
 Consumers will get a message, and laucnh the `execute(AMQPMessage $msg)`.
 
@@ -96,6 +117,7 @@ The message will be unserialized, and the operation will be executed. Following 
 ## Update batch/operation status
 
 During the process of the excution of the producers, we dispatch some events
+
 * WELP_BATCH_OPERATION_STARTED
 * WELP_BATCH_OPERATION_FINISHED
 * WELP_BATCH_OPERATION_ERROR

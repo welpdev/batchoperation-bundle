@@ -19,7 +19,7 @@ $bundles = [
 
 ## Extends the models
 
-In order to use this bundle, you have to extends our two models : `Welp\BatchBundle\Model\Batch` and `Welp\BatchBundle\Model\Operation`
+In order to use this bundle, you have to extends our models : `Welp\BatchBundle\Model\Batch`
 
 Example :
 
@@ -128,5 +128,7 @@ class Batch extends BaseBatch
 ```
 
 ## Configuration
+
+
 
 take a look [here](configuration.md) to configure the bundle
