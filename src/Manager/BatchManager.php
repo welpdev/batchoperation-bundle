@@ -93,6 +93,13 @@ class BatchManager implements BaseManager
         return $batch;
     }
 
+    public function findBy(array $params)
+    {
+        $batches = $this->repository->findBy($params);
+
+        return $batches;
+    }
+
     /**
      * {@inheritdoc}
      */

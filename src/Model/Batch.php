@@ -43,6 +43,11 @@ class Batch implements BatchInterface
     protected $errors;
 
     /**
+     * @var string
+     */
+    protected $group;
+
+    /**
      * @return int
      */
     public function getId()
@@ -160,5 +165,23 @@ class Batch implements BatchInterface
     public function addError(array $error)
     {
         $this->errors[] = $error;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+        return $this;
     }
 }

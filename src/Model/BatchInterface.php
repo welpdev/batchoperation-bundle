@@ -100,4 +100,15 @@ interface BatchInterface
      * @param array $error
      */
     public function addError(array $error);
+
+
+    /**
+     * @return string
+     */
+    public function getGroup();
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group);
 }
