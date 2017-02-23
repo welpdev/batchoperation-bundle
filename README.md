@@ -16,7 +16,6 @@ Symfony Bundle to manage batch operation. You can choose whatever broker you wan
 - [ ] Support Redis as a broker
 - [ ] Support other Broker
 - [ ] Delete Batch and operations from queue, and revert actions
--
 
 ## Quickstart
 
