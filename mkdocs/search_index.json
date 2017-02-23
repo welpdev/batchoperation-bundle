@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "WelpBatchBundle\n\n\nSymfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)\n\n\nFeatures\n\n\n\n\n Support RabbitMq\n\n\n Automatically create producer\n\n\n Automatically create consumer\n\n\n Automatically create queue\n\n\n Support create/Delete Action\n\n\n Support custom action\n\n\n Exploit Batch Size\n\n\n\n\n\n\n Manage Batch, batch Status, Batch Event\n\n\n Rest Controller\n\n\n Support Redis as a broker\n\n\n Support other Broker\n\n\n\n\n[ ] Delete Batch and operations from queue, and revert actions\n\n\n\n\n\n\nQuickstart\n\n\nAdd the bundle to your project\n\n\ncomposer require batchOperation-bundle\n\n\n\nAdd \nWelp\\BatchBundle\\WelpBatchBundle\n to your \nAppKernel.php\n:\n\n\n$bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];\n\n\n\nExtends the BatchModel\n\n\nCreate a entity which extends out \nWelp\\BatchBundle\\Model\\BatchModel\n\n\nuse Doctrine\\ORM\\Mapping as ORM;\nuse Welp\\BatchBundle\\Model\\Batch as BaseBatch;\n\n/**\n * @ORM\\Entity()\n * @ORM\\Table(name=\nbatch\n)\n * @ORM\\HasLifecycleCallbacks\n */\nclass Batch extends BaseBatch{\n    ...\n}\n\n\n\nMinimal Configuration\n\n\nwelp_batch:\n    entity_manager: doctrine.orm.entity_manager\n    batch_entity:\n        batch: MyBundle\\Entity\\Batch\n\n\n\nFull Documentation\n\n\nyou can find the full documentation at \nhttps://welpdev.github.io/batchoperation-bundle/", 
+            "text": "WelpBatchBundle\n\n\nSymfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)\n\n\nFeatures\n\n\n\n\n Support RabbitMq\n\n\n Automatically create producer\n\n\n Automatically create consumer\n\n\n Automatically create queue\n\n\n Support create/Delete Action\n\n\n Support custom action\n\n\n Exploit Batch Size\n\n\n\n\n\n\n Manage Batch, batch Status, Batch Event\n\n\n Rest Controller\n\n\n Support Redis as a broker\n\n\n Support other Broker\n\n\n Delete Batch and operations from queue, and revert actions\n\n\n\n\nQuickstart\n\n\nAdd the bundle to your project\n\n\ncomposer require batchOperation-bundle\n\n\n\nAdd \nWelp\\BatchBundle\\WelpBatchBundle\n to your \nAppKernel.php\n:\n\n\n$bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];\n\n\n\nExtends the BatchModel\n\n\nCreate a entity which extends out \nWelp\\BatchBundle\\Model\\BatchModel\n\n\nuse Doctrine\\ORM\\Mapping as ORM;\nuse Welp\\BatchBundle\\Model\\Batch as BaseBatch;\n\n/**\n * @ORM\\Entity()\n * @ORM\\Table(name=\nbatch\n)\n * @ORM\\HasLifecycleCallbacks\n */\nclass Batch extends BaseBatch{\n    ...\n}\n\n\n\nMinimal Configuration\n\n\nwelp_batch:\n    entity_manager: doctrine.orm.entity_manager\n    batch_entity:\n        batch: MyBundle\\Entity\\Batch\n\n\n\nFull Documentation\n\n\nyou can find the full documentation at \nhttps://welpdev.github.io/batchoperation-bundle/", 
             "title": "Index"
         }, 
         {
@@ -12,13 +12,8 @@
         }, 
         {
             "location": "/#features", 
-            "text": "Support RabbitMq   Automatically create producer   Automatically create consumer   Automatically create queue   Support create/Delete Action   Support custom action   Exploit Batch Size     Manage Batch, batch Status, Batch Event   Rest Controller   Support Redis as a broker   Support other Broker", 
+            "text": "Support RabbitMq   Automatically create producer   Automatically create consumer   Automatically create queue   Support create/Delete Action   Support custom action   Exploit Batch Size     Manage Batch, batch Status, Batch Event   Rest Controller   Support Redis as a broker   Support other Broker   Delete Batch and operations from queue, and revert actions", 
             "title": "Features"
-        }, 
-        {
-            "location": "/#delete-batch-and-operations-from-queue-and-revert-actions", 
-            "text": "", 
-            "title": "[ ] Delete Batch and operations from queue, and revert actions"
         }, 
         {
             "location": "/#quickstart", 
