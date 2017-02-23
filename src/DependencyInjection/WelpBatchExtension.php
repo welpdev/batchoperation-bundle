@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
+use Welp\BatchBundle\Command\AMQP\RabbitMQConsumerCommand;
+
 /**
  * This is the class that loads and manages your bundle configuration.
  *
@@ -45,6 +47,7 @@ class WelpBatchExtension extends Extension
             }
             $this->loadRMQProducerDynamically($config['manage_entities'], $config['broker_connection']);
             $this->loadRMQConsumerDynamically($config['manage_entities'], $config['broker_connection']);
+            $this->loadRMQCommandDynamically($config['manage_entities']);
         }
 
         //TODO other broker type
@@ -147,6 +150,18 @@ class WelpBatchExtension extends Extension
 
         return 'welp_batch.'.$name;
     }
+
+    public function loadRMQCommandDynamically(array $managedEntity)
+    {
+        foreach ($managedEntity as $key => $entity) { // for each entity, we create a new producer
+            foreach ($entity['actions'] as $action) {
+                $this->container->register('welp_batch:consumer:'.$key.'.'.$action, RabbitMQConsumerCommand::class)
+                    ->setArguments(array(sprintf('old_sound_rabbit_mq.%s_consumer', 'welp_batch.'.$key.'.'.$action), 'welp_batch:consumer:'.$key.'.'.$action));
+            }
+        }
+    }
+
+
 
     /**
      * Symfony 2 converts '-' to '_' when defined in the configuration. This leads to problems when using x-ha-policy
