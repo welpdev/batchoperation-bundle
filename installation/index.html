@@ -243,6 +243,15 @@ class Batch extends BaseBatch
      * @Serializer\Expose
      */
     protected $finishedAt;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name=&quot;group_name&quot;, type=&quot;string&quot;, length=255)
+     * @Serializer\Groups({&quot;Default&quot;})
+     * @Serializer\Expose
+     */
+    protected $group;
 }</code></pre>
 
 <h2 id="configuration">Configuration</h2>
