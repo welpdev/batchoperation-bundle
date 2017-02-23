@@ -244,6 +244,61 @@
             "location": "/explanation/#format-result", 
             "text": "At the end of a batch, we automatically create a file names results-{batchId}-TodayDate. The file will be created in the given folder, the one you give in your configuration.", 
             "title": "Format Result"
+        }, 
+        {
+            "location": "/event/", 
+            "text": "Event\n\n\nWe raise 3 events during the processing of the operations.\n\n\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_STARTED\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_FINISHED\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_ERROR\n\n\n\n\nWhere to find Events ?\n\n\nAll our events are declared in the \nWelp\\BatchBundle\\WelpBatchEvent\n\n\nWhen are they raised ?\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_STARTED\n\n\nThis one is raised at the beginning of an operation.\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_FINISHED\n\n\nThis one is raised at the end of an operation (even if an error is encounter in the operation)\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_ERROR\n\n\nThis one is raised when a action launch by an operation throw an error. Possible error can be :\n\n\n\n\nEntity not found (the id given in the payload doesn't match any id the database)\n\n\nForm error (the payload given to be bind to the form is nor correct =\n Extra Fields, required field not given)\n\n\n\n\nEvent Listener\n\n\nOur event listener is here : \nWelp\\BatchBundle\\EventListener\\OperationListener\n\n\nreturn [\n    WelpBatchEvent::WELP_BATCH_OPERATION_STARTED =\n 'startOperation',\n    WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED =\n 'finishOperation',\n    WelpBatchEvent::WELP_BATCH_OPERATION_ERROR =\n 'errorOperation',\n];\n\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_STARTED\n\n\nWhen this event is raised, if the batch is not started, we change the status of the batch\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_FINISHED\n\n\nWhen this event is raised, we update the Status of the batch. If all operations are finished, we create the file containing the results\n\n\nWelpBatchEvent::WELP_BATCH_OPERATION_ERROR\n\n\nWhen this event is raised, we update the status of the batch, and we add an error to the errors array of the batch. This array will then be used for formatting the result file.", 
+            "title": "Events"
+        }, 
+        {
+            "location": "/event/#event", 
+            "text": "We raise 3 events during the processing of the operations.   WelpBatchEvent::WELP_BATCH_OPERATION_STARTED  WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED  WelpBatchEvent::WELP_BATCH_OPERATION_ERROR", 
+            "title": "Event"
+        }, 
+        {
+            "location": "/event/#where-to-find-events", 
+            "text": "All our events are declared in the  Welp\\BatchBundle\\WelpBatchEvent", 
+            "title": "Where to find Events ?"
+        }, 
+        {
+            "location": "/event/#when-are-they-raised", 
+            "text": "", 
+            "title": "When are they raised ?"
+        }, 
+        {
+            "location": "/event/#welpbatcheventwelp_batch_operation_started", 
+            "text": "This one is raised at the beginning of an operation.", 
+            "title": "WelpBatchEvent::WELP_BATCH_OPERATION_STARTED"
+        }, 
+        {
+            "location": "/event/#welpbatcheventwelp_batch_operation_finished", 
+            "text": "This one is raised at the end of an operation (even if an error is encounter in the operation)", 
+            "title": "WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED"
+        }, 
+        {
+            "location": "/event/#welpbatcheventwelp_batch_operation_error", 
+            "text": "This one is raised when a action launch by an operation throw an error. Possible error can be :   Entity not found (the id given in the payload doesn't match any id the database)  Form error (the payload given to be bind to the form is nor correct =  Extra Fields, required field not given)", 
+            "title": "WelpBatchEvent::WELP_BATCH_OPERATION_ERROR"
+        }, 
+        {
+            "location": "/event/#event-listener", 
+            "text": "Our event listener is here :  Welp\\BatchBundle\\EventListener\\OperationListener  return [\n    WelpBatchEvent::WELP_BATCH_OPERATION_STARTED =  'startOperation',\n    WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED =  'finishOperation',\n    WelpBatchEvent::WELP_BATCH_OPERATION_ERROR =  'errorOperation',\n];", 
+            "title": "Event Listener"
+        }, 
+        {
+            "location": "/event/#welpbatcheventwelp_batch_operation_started_1", 
+            "text": "When this event is raised, if the batch is not started, we change the status of the batch", 
+            "title": "WelpBatchEvent::WELP_BATCH_OPERATION_STARTED"
+        }, 
+        {
+            "location": "/event/#welpbatcheventwelp_batch_operation_finished_1", 
+            "text": "When this event is raised, we update the Status of the batch. If all operations are finished, we create the file containing the results", 
+            "title": "WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED"
+        }, 
+        {
+            "location": "/event/#welpbatcheventwelp_batch_operation_error_1", 
+            "text": "When this event is raised, we update the status of the batch, and we add an error to the errors array of the batch. This array will then be used for formatting the result file.", 
+            "title": "WelpBatchEvent::WELP_BATCH_OPERATION_ERROR"
         }
     ]
 }

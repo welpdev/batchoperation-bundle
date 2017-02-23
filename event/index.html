@@ -8,7 +8,7 @@
   
   <meta name="author" content="Gaetan DELBART">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Configuration - WelpBatch Bundle</title>
+  <title>Events - WelpBatch Bundle</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,9 +17,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Configuration";
-    var mkdocs_page_input_path = "configuration.md";
-    var mkdocs_page_url = "/configuration/";
+    var mkdocs_page_name = "Events";
+    var mkdocs_page_input_path = "event.md";
+    var mkdocs_page_url = "/event/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -61,19 +61,8 @@
 <li>
           
             <li>
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Configuration</a>
-        
-            <ul>
-            
-                <li class="toctree-l3"><a href="#configuration">Configuration</a></li>
-                
-                    <li><a class="toctree-l4" href="#full-configuration">Full Configuration</a></li>
-                
-                    <li><a class="toctree-l4" href="#manage_entitites-explanation">Manage_entitites explanation</a></li>
-                
-            
-            </ul>
+    <li class="toctree-l1 ">
+        <a class="" href="../configuration/">Configuration</a>
         
     </li>
 <li>
@@ -93,8 +82,21 @@
 <li>
           
             <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../event/">Events</a>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Events</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#event">Event</a></li>
+                
+                    <li><a class="toctree-l4" href="#where-to-find-events">Where to find Events ?</a></li>
+                
+                    <li><a class="toctree-l4" href="#when-are-they-raised">When are they raised ?</a></li>
+                
+                    <li><a class="toctree-l4" href="#event-listener">Event Listener</a></li>
+                
+            
+            </ul>
         
     </li>
 <li>
@@ -121,10 +123,10 @@
     
       
     
-    <li>Configuration</li>
+    <li>Events</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/welpdev/batchoperation-bundle/edit/master/docs/configuration.md"
+        <a href="https://github.com/welpdev/batchoperation-bundle/edit/master/docs/event.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -134,36 +136,40 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="configuration">Configuration</h1>
-<p>In your <code>config.yml</code>:</p>
-<h2 id="full-configuration">Full Configuration</h2>
-<pre class="highlight"><code class="language-yaml linenums">welp_batch:
-    entity_manager: doctrine.orm.entity_manager #name of the entity manager service
-    broker_type: rabbitmq #type of the broker
-    broker_connection: default #name of the connection to the broker
-    batch_entity: MyBundle\Entity\Batch #entity which extends the batch Model
-    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files
-        batch: MyBundle\Entity\Batch
-    manage_entities: #Batchable entity
-        need:
-            entity_name: MyBundle\Entity\Need
-            form_name: MyBundle\Form\NeedType
-            batch_size: 10
-            actions: ['create','delete']
-        proposition:
-            entity_name: MyBundle\Entity\Proposition
-            form_name: MyBundle\Form\PropositionType
-            batch_size: 10
-            actions: ['create']</code></pre>
-
-<h2 id="manage_entitites-explanation">Manage_entitites explanation</h2>
-<p>You can add as many entities as you like. Each of them must have the following attributes :</p>
+                <h1 id="event">Event</h1>
+<p>We raise 3 events during the processing of the operations.</p>
 <ul>
-<li>entity_name : full name of the entity</li>
-<li>form_name : full name of the form corresponding to this entity. This form will be used to bind the given parameters to the new entity (see section TODO for more details)</li>
-<li>actions : array of action. At the moment, we only support create and delete</li>
-<li>batch_size : number of message to take from the queue at a time.</li>
+<li>WelpBatchEvent::WELP_BATCH_OPERATION_STARTED</li>
+<li>WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED</li>
+<li>WelpBatchEvent::WELP_BATCH_OPERATION_ERROR</li>
 </ul>
+<h2 id="where-to-find-events">Where to find Events ?</h2>
+<p>All our events are declared in the <code>Welp\BatchBundle\WelpBatchEvent</code></p>
+<h2 id="when-are-they-raised">When are they raised ?</h2>
+<h3 id="welpbatcheventwelp_batch_operation_started">WelpBatchEvent::WELP_BATCH_OPERATION_STARTED</h3>
+<p>This one is raised at the beginning of an operation.</p>
+<h3 id="welpbatcheventwelp_batch_operation_finished">WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED</h3>
+<p>This one is raised at the end of an operation (even if an error is encounter in the operation)</p>
+<h3 id="welpbatcheventwelp_batch_operation_error">WelpBatchEvent::WELP_BATCH_OPERATION_ERROR</h3>
+<p>This one is raised when a action launch by an operation throw an error. Possible error can be :</p>
+<ul>
+<li>Entity not found (the id given in the payload doesn't match any id the database)</li>
+<li>Form error (the payload given to be bind to the form is nor correct =&gt; Extra Fields, required field not given)</li>
+</ul>
+<h2 id="event-listener">Event Listener</h2>
+<p>Our event listener is here : <code>Welp\BatchBundle\EventListener\OperationListener</code></p>
+<pre class="highlight"><code class="language-php linenums">return [
+    WelpBatchEvent::WELP_BATCH_OPERATION_STARTED =&gt; 'startOperation',
+    WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED =&gt; 'finishOperation',
+    WelpBatchEvent::WELP_BATCH_OPERATION_ERROR =&gt; 'errorOperation',
+];</code></pre>
+
+<h3 id="welpbatcheventwelp_batch_operation_started_1">WelpBatchEvent::WELP_BATCH_OPERATION_STARTED</h3>
+<p>When this event is raised, if the batch is not started, we change the status of the batch</p>
+<h3 id="welpbatcheventwelp_batch_operation_finished_1">WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED</h3>
+<p>When this event is raised, we update the Status of the batch. If all operations are finished, we create the file containing the results</p>
+<h3 id="welpbatcheventwelp_batch_operation_error_1">WelpBatchEvent::WELP_BATCH_OPERATION_ERROR</h3>
+<p>When this event is raised, we update the status of the batch, and we add an error to the errors array of the batch. This array will then be used for formatting the result file.</p>
               
             </div>
           </div>
@@ -171,10 +177,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../api/" class="btn btn-neutral float-right" title="API">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="../installation/" class="btn btn-neutral" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../explanation/" class="btn btn-neutral" title="Explanation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -204,10 +208,8 @@
           <a href="https://github.com/welpdev/batchoperation-bundle" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../installation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../explanation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../api/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
