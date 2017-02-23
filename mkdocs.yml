@@ -11,6 +11,7 @@ pages:
     - Configuration: configuration.md
     - API : api.md
     - Explanation: explanation.md
+    - Events : event.md
 theme: readthedocs
 markdown_extensions:
     - pymdownx.github
