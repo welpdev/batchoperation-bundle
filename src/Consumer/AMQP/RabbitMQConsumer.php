@@ -88,6 +88,7 @@ class RabbitMQConsumer implements ConsumerInterface
         }
 
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
+        return true;
     }
 
     /**

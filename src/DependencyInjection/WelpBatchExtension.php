@@ -155,8 +155,9 @@ class WelpBatchExtension extends Extension
     {
         foreach ($managedEntity as $key => $entity) { // for each entity, we create a new producer
             foreach ($entity['actions'] as $action) {
-                $this->container->register('welp_batch:consumer:'.$key.'.'.$action, RabbitMQConsumerCommand::class)
-                    ->setArguments(array(sprintf('old_sound_rabbit_mq.%s_consumer', 'welp_batch.'.$key.'.'.$action), 'welp_batch:consumer:'.$key.'.'.$action));
+                $this->container->register('welp_batch_consumer_'.$key.'.'.$action, RabbitMQConsumerCommand::class)
+                    ->setArguments(array('welp_batch.'.$key, 'welp_batch:consumer:'.$key.'.'.$action))
+                    ->addTag('console.command');
             }
         }
     }

@@ -23,6 +23,7 @@ class RabbitMQConsumerCommand extends ContainerAwareCommand
     {
         $this->serviceName = $serviceName;
         $this->commandName = $commandName;
+        parent::__construct();
     }
 
     protected function configure()
