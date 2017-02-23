@@ -103,7 +103,131 @@ POST /batches
 }
 ```
 
-### GET
+### GET ALL
+
+#### Route
+
+GET /batches
+
+#### Filters
+
+* group (string)
+
+#### Response
+
+```json
+{
+  "success": true,
+  "batch": {
+    "id": 43,
+    "status": "welp_batch_pending",
+    "operations": [
+      {
+        "type": "need",
+        "action": "create",
+        "payload": {
+          "place": {
+            "searchedBy": "route",
+            "route": "Rue de Dunkerque",
+            "locality": "Paris",
+            "administrativeArealevel1": "Île-de-France",
+            "country": "France",
+            "name": "Rue de Dunkerque, Paris, France",
+            "latitude": 48.8807242,
+            "longitude": 2.3516483999999
+          },
+          "description": "le test du batch du need2",
+          "title": "le test du batch du need2",
+          "category": 11,
+          "authovdfvdfvdfvvvdvdsvdfsdfr": 2
+        },
+        "operationId": 1
+      },
+      {
+        "type": "need",
+        "action": "create",
+        "payload": {
+          "place": {
+            "searchedBy": "route",
+            "route": "Rue de Dunkerque",
+            "locality": "Paris",
+            "administrativeArealevel1": "Île-de-France",
+            "country": "France",
+            "name": "Rue de Dunkerque, Paris, France",
+            "latitude": 48.8807242,
+            "longitude": 2.3516483999999
+          },
+          "description": "le test du batch du need2",
+          "title": "le test du batch du need2",
+          "category": 11,
+          "author": 2
+        },
+        "operationId": 2
+      }
+    ],
+    "total_operations": 2,
+    "total_executed_operations": 0,
+    "group":"test",
+    "created_at": "2017-02-21T18:26:46+0100",
+    "updated_at": "2017-02-21T18:26:46+0100"
+    },
+    {
+      "id": 44,
+      "status": "welp_batch_pending",
+      "operations": [
+        {
+          "type": "need",
+          "action": "create",
+          "payload": {
+            "place": {
+              "searchedBy": "route",
+              "route": "Rue de Dunkerque",
+              "locality": "Paris",
+              "administrativeArealevel1": "Île-de-France",
+              "country": "France",
+              "name": "Rue de Dunkerque, Paris, France",
+              "latitude": 48.8807242,
+              "longitude": 2.3516483999999
+            },
+            "description": "le test du batch du need2",
+            "title": "le test du batch du need2",
+            "category": 11,
+            "authovdfvdfvdfvvvdvdsvdfsdfr": 2
+          },
+          "operationId": 1
+        },
+        {
+          "type": "need",
+          "action": "create",
+          "payload": {
+            "place": {
+              "searchedBy": "route",
+              "route": "Rue de Dunkerque",
+              "locality": "Paris",
+              "administrativeArealevel1": "Île-de-France",
+              "country": "France",
+              "name": "Rue de Dunkerque, Paris, France",
+              "latitude": 48.8807242,
+              "longitude": 2.3516483999999
+            },
+            "description": "le test du batch du need2",
+            "title": "le test du batch du need2",
+            "category": 11,
+            "author": 2
+          },
+          "operationId": 2
+        }
+      ],
+      "total_operations": 2,
+      "total_executed_operations": 0,
+      "group":"test2",
+      "created_at": "2017-02-21T18:26:46+0100",
+      "updated_at": "2017-02-21T18:26:46+0100"
+    }
+}
+```
+
+### GET ONE
 
 #### Route
 

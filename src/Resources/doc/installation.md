@@ -124,6 +124,15 @@ class Batch extends BaseBatch
      * @Serializer\Expose
      */
     protected $finishedAt;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="group_name", type="string", length=255)
+     * @Serializer\Groups({"Default"})
+     * @Serializer\Expose
+     */
+    protected $group;
 }
 ```
 
