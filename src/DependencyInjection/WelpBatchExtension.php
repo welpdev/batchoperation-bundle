@@ -30,7 +30,6 @@ class WelpBatchExtension extends Extension
         $container->setParameter('welp_batch.entity_manager', $config['entity_manager']);
         $container->setParameter('welp_batch.broker_type', $config['broker_type']);
         $container->setParameter('welp_batch.batch_entity.batch', $config['batch_entity']['batch']);
-        $container->setParameter('welp_batch.batch_entity.operation', $config['batch_entity']['operation']);
         $container->setParameter('welp_batch.broker_connection', $config['broker_connection']);
         $container->setParameter('welp_batch.batch_results_folder', $config['batch_results_folder']);
 

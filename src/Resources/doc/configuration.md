@@ -12,7 +12,6 @@ welp_batch:
     batch_entity: MyBundle\Entity\Batch #entity which extends the batch Model
     batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files
         batch: MyBundle\Entity\Batch
-        operation: MyBundle\Entity\Operation
     manage_entities: #Batchable entity
         need:
             entity_name: MyBundle\Entity\Need

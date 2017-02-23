@@ -2,7 +2,7 @@
 
 ## Install the bundle
 
-Add bundle to your project:
+Add the bundle to your project:
 
 ```bash
 composer require batchOperation-bundle
@@ -124,7 +124,7 @@ class Batch extends BaseBatch
      * @Serializer\Expose
      */
     protected $finishedAt;
-    
+
     /**
      * @var string
      *
