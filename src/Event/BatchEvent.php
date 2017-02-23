@@ -15,13 +15,19 @@ class BatchEvent extends Event
      * @var BatchInterface
      */
     protected $batch;
+    
+    /**
+     * @var integer
+     */
+    protected $operationId;
 
     /**
      * @param Batch $batch batch which raise the event
      */
-    public function __construct(Batch $batch)
+    public function __construct(Batch $batch, $operationId)
     {
         $this->batch = $batch;
+        $this->operationId = $operationId;
     }
 
     /**
@@ -30,5 +36,10 @@ class BatchEvent extends Event
     public function getBatch()
     {
         return $this->batch;
+    }
+    
+    public function getOperationId()
+    {
+        return $this->operationId;
     }
 }

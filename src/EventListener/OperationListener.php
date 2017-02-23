@@ -80,7 +80,7 @@ class OperationListener implements EventSubscriberInterface
     public function finishOperation(BatchEvent $event)
     {
         $batch = $event->getBatch();
-        $this->updatebatch($batch);
+        $this->updatebatch($batch, $event->getOperationId());
     }
 
     /**
@@ -95,29 +95,26 @@ class OperationListener implements EventSubscriberInterface
             'operationId'=> $event->getOperationId()
         );
         $batch->addError($temp);
-        $this->updatebatch($batch);
+        $this->updatebatch($batch, $event->getOperationId());
     }
 
     /**
      * This function is used when we went to update the status of a batch
      * @param  BatchInterface $batch
      */
-    public function updateBatch($batch)
+    public function updateBatch($batch, $operationId)
     {
         $totalOperations = $batch->getTotalOperations();
-        $totalExecutedOperations = $batch->getTotalExecutedOperations();
+        $batch = $this->batchManager->addExecutedOperation($batch, $operationId);
+        $totalExecutedOperations = count($batch->getExecutedOperations());
 
-        $totalExecutedOperations+=1;
-        $batch->setTotalExecutedOperations($totalExecutedOperations);
-
+        var_dump($totalExecutedOperations);
         if ($totalOperations <= $totalExecutedOperations) { //all operations have been executed
             $batch->setStatus(Batch::STATUS_FINISHED);
             $batch->setFinishedAt(new \DateTime());
-
+            $this->batchManager->update($batch);
             //write the responses to a file TODO check if this is the right thing to do
             $this->batchManager->generateResults($batch);
         }
-
-        $this->batchManager->update($batch);
     }
 }

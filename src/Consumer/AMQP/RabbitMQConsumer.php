@@ -74,7 +74,7 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $batch = $this->container->get('welp_batch.batch_manager')->get($temp['batchId']);
 
-        $event = new BatchEvent($batch);
+        $event = new BatchEvent($batch, $this->className.'.'.$temp['action'].'.'.$temp['operationId']);
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_STARTED, $event);
 
         $action = $temp['action'];
@@ -120,7 +120,7 @@ class RabbitMQConsumer implements ConsumerInterface
         $entity = $this->repository->findOneById($id);
 
         if ($entity == null) {
-            throw new BatchException(404, $tis->className.' not found', $batch);
+            throw new BatchException(404, $this->className.' not found', $batch);
         }
 
         $this->entityManager->remove($entity);

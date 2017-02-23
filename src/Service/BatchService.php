@@ -71,7 +71,7 @@ class BatchService
         $batch = $this->batchManager->createNew();
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setTotalOperations(count($operations));
-        $batch->setTotalExecutedOperations(0);
+        $batch->setExecutedOperations(array());
         $batch->setGroup($group);
 
         $this->batchManager->create($batch);

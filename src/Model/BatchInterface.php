@@ -72,16 +72,22 @@ interface BatchInterface
     public function setTotalOperations($totalOperations);
 
     /**
-     * @return int
+     * @return array
      */
-    public function getTotalExecutedOperations();
+    public function getExecutedOperations();
 
     /**
-     * @param int $totalOperations
+     * @param array $executedOperations
      *
      * @return self
      */
-    public function setTotalExecutedOperations($totalExecutedOperations);
+    public function setExecutedOperations($executedOperations);
+
+    /**
+     *
+     * @param string $operationId
+     */
+    public function addExecutedOperations($operationId);
 
     /**
      * @return array

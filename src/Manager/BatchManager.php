@@ -112,10 +112,20 @@ class BatchManager implements BaseManager
     {
         $entity->setUpdatedAt(new \DateTime());
         //dump($entity);die();
-        $this->entityManager->persist($entity);
+        $this->entityManager->merge($entity);
         $this->entityManager->flush();
 
         return $entity;
+    }
+
+    public function addExecutedOperation($batch, $operationId)
+    {
+        $this->entityManager->refresh($batch);
+
+        $batch->addExecutedOperations($operationId);
+        $this->entityManager->flush();
+
+        return $batch;
     }
 
     /**
@@ -167,7 +177,7 @@ class BatchManager implements BaseManager
             $fs->mkDir($this->folderName);
         }
 
-        //$fs->dumpFile($fileName, $content);
+        $fs->dumpFile($fileName, $content);
         return $content;
     }
 
@@ -184,7 +194,9 @@ class BatchManager implements BaseManager
 
         $filenameTemp = $this->folderName.'results-'.$batch->getId().'-*';
 
-        $files = iterator_to_array($finder->files()->in($filenameTemp));
+        $finder->files()->name('results-'.$batch->getId().'-*');
+        $files = iterator_to_array($finder->in($this->folderName));
+
         $content = "";
 
         if (count($files)> 0) {

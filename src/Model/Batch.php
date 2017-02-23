@@ -32,10 +32,10 @@ class Batch implements BatchInterface
     protected $totalOperations;
 
     /**
-     * @var int
+     * @var array
      *
      */
-    protected $totalExecutedOperations  ;
+    protected $executedOperations  ;
 
     /**
      * @var ArrayCollection $errors
@@ -124,17 +124,26 @@ class Batch implements BatchInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalExecutedOperations()
+    public function getExecutedOperations()
     {
-        return $this->totalExecutedOperations;
+        return $this->executedOperations;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setTotalExecutedOperations($totalExecutedOperations)
+    public function addExecutedOperations($operationId)
     {
-        $this->totalExecutedOperations = $totalExecutedOperations;
+        $this->executedOperations[] = $operationId;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExecutedOperations($executedOperation)
+    {
+        $this->executedOperations = $executedOperation;
         return $this;
     }
 
