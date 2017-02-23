@@ -114,7 +114,7 @@ class BatchManager implements BaseManager
     {
         $entity->setUpdatedAt(new \DateTime());
         //dump($entity);die();
-        $this->entityManager->merge($entity);
+        $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
         return $entity;
@@ -167,11 +167,13 @@ class BatchManager implements BaseManager
             $test = array_filter($batch->getErrors(), function ($e) use ($operation) {
                 return $e['operationId'] == $operation['operationId'];
             });
+
             $result = array();
             $result['operationId'] = $operation['operationId'];
             $result['error'] = false;
+            
             if (count($test)>0) {
-                $result['text'] = $test[0]["error"];
+                $result['text'] = reset($test)["error"];
                 $result['error'] = true;
             } else {
                 $result['message'] = 'operation OK';

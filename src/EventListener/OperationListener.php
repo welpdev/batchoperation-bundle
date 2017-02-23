@@ -95,6 +95,7 @@ class OperationListener implements EventSubscriberInterface
             'operationId'=> $event->getOperationId()
         );
         $batch->addError($temp);
+        $this->batchManager->update($batch);
         $this->updatebatch($batch, $event->getOperationId());
     }
 
