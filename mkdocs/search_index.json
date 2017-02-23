@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/", 
-            "text": "WelpBatchBundle\n\n\nSymfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)\n\n\nFull Documentation\n\n\nyou can find the full documentation at \nhttps://welpdev.github.io/batchoperation-bundle/", 
+            "text": "WelpBatchBundle\n\n\nSymfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)\n\n\nFeatures\n\n\n\n\n Support RabbitMq\n\n\n Automatically create producer\n\n\n Automatically create consumer\n\n\n Automatically create queue\n\n\n Support create/Delete Action\n\n\n Support custom action\n\n\n Exploit Batch Size\n\n\n\n\n\n\n Manage Batch, batch Status, Batch Event\n\n\n Rest Controller\n\n\n Support Redis as a broker\n\n\n Support other Broker\n\n\n\n\n[ ] Delete Batch and operations from queue, and revert actions\n\n\n\n\n\n\nQuickstart\n\n\nAdd the bundle to your project\n\n\ncomposer require batchOperation-bundle\n\n\n\nAdd \nWelp\\BatchBundle\\WelpBatchBundle\n to your \nAppKernel.php\n:\n\n\n$bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];\n\n\n\nExtends the BatchModel\n\n\nCreate a entity which extends out \nWelp\\BatchBundle\\Model\\BatchModel\n\n\nuse Doctrine\\ORM\\Mapping as ORM;\nuse Welp\\BatchBundle\\Model\\Batch as BaseBatch;\n\n/**\n * @ORM\\Entity()\n * @ORM\\Table(name=\nbatch\n)\n * @ORM\\HasLifecycleCallbacks\n */\nclass Batch extends BaseBatch{\n    ...\n}\n\n\n\nMinimal Configuration\n\n\nwelp_batch:\n    entity_manager: doctrine.orm.entity_manager\n    batch_entity:\n        batch: MyBundle\\Entity\\Batch\n\n\n\nFull Documentation\n\n\nyou can find the full documentation at \nhttps://welpdev.github.io/batchoperation-bundle/", 
             "title": "Index"
         }, 
         {
@@ -11,13 +11,43 @@
             "title": "WelpBatchBundle"
         }, 
         {
+            "location": "/#features", 
+            "text": "Support RabbitMq   Automatically create producer   Automatically create consumer   Automatically create queue   Support create/Delete Action   Support custom action   Exploit Batch Size     Manage Batch, batch Status, Batch Event   Rest Controller   Support Redis as a broker   Support other Broker", 
+            "title": "Features"
+        }, 
+        {
+            "location": "/#delete-batch-and-operations-from-queue-and-revert-actions", 
+            "text": "", 
+            "title": "[ ] Delete Batch and operations from queue, and revert actions"
+        }, 
+        {
+            "location": "/#quickstart", 
+            "text": "", 
+            "title": "Quickstart"
+        }, 
+        {
+            "location": "/#add-the-bundle-to-your-project", 
+            "text": "composer require batchOperation-bundle  Add  Welp\\BatchBundle\\WelpBatchBundle  to your  AppKernel.php :  $bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];", 
+            "title": "Add the bundle to your project"
+        }, 
+        {
+            "location": "/#extends-the-batchmodel", 
+            "text": "Create a entity which extends out  Welp\\BatchBundle\\Model\\BatchModel  use Doctrine\\ORM\\Mapping as ORM;\nuse Welp\\BatchBundle\\Model\\Batch as BaseBatch;\n\n/**\n * @ORM\\Entity()\n * @ORM\\Table(name= batch )\n * @ORM\\HasLifecycleCallbacks\n */\nclass Batch extends BaseBatch{\n    ...\n}", 
+            "title": "Extends the BatchModel"
+        }, 
+        {
+            "location": "/#minimal-configuration", 
+            "text": "welp_batch:\n    entity_manager: doctrine.orm.entity_manager\n    batch_entity:\n        batch: MyBundle\\Entity\\Batch", 
+            "title": "Minimal Configuration"
+        }, 
+        {
             "location": "/#full-documentation", 
             "text": "you can find the full documentation at  https://welpdev.github.io/batchoperation-bundle/", 
             "title": "Full Documentation"
         }, 
         {
             "location": "/installation/", 
-            "text": "Installation\n\n\nInstall the bundle\n\n\nAdd bundle to your project:\n\n\ncomposer require batchOperation-bundle\n\n\n\nAdd \nWelp\\BatchBundle\\WelpBatchBundle\n to your \nAppKernel.php\n:\n\n\n$bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];\n\n\n\nExtends the models\n\n\nIn order to use this bundle, you have to extends our models : \nWelp\\BatchBundle\\Model\\Batch\n\n\nExample :\n\n\n/**\n * @ORM\\Entity()\n * @ORM\\Table(name=\nbatch\n)\n * @ORM\\HasLifecycleCallbacks\n */\nclass Batch extends BaseBatch\n{\n\n    /**\n     * @var int\n     *\n     * @ORM\\Id\n     * @ORM\\Column(type=\ninteger\n)\n     * @ORM\\GeneratedValue(strategy=\nAUTO\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $id;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\nstatus\n, type=\nstring\n, length=255)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $status;\n\n    /**\n     * @var string\n     *\n     * @ORM\\OneToMany(targetEntity=\nOperation\n, mappedBy=\nbatch\n, cascade={\npersist\n, \nremove\n})\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     *\n     */\n    protected $operations;\n\n    /**\n     * @var integer\n     *\n     * @ORM\\Column(name=\ntotal_operations\n, type=\ninteger\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $totalOperations;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\ntotal_executed_operations\n, type=\ninteger\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $totalExecutedOperations;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\nerrors\n, type=\narray\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $errors;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\ncreated_at\n, type=\ndatetime\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $createdAt;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\nupdated_at\n, type=\ndatetime\n,nullable=true)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $updatedAt;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\nstarted_at\n, type=\ndatetime\n,nullable=true)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $startedAt;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\nfinished_at\n, type=\ndatetime\n,nullable=true)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $finishedAt;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\ngroup_name\n, type=\nstring\n, length=255)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $group;\n}\n\n\n\nConfiguration\n\n\ntake a look \nhere\n to configure the bundle", 
+            "text": "Installation\n\n\nInstall the bundle\n\n\nAdd the bundle to your project:\n\n\ncomposer require batchOperation-bundle\n\n\n\nAdd \nWelp\\BatchBundle\\WelpBatchBundle\n to your \nAppKernel.php\n:\n\n\n$bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];\n\n\n\nExtends the models\n\n\nIn order to use this bundle, you have to extends our models : \nWelp\\BatchBundle\\Model\\Batch\n\n\nExample :\n\n\n/**\n * @ORM\\Entity()\n * @ORM\\Table(name=\nbatch\n)\n * @ORM\\HasLifecycleCallbacks\n */\nclass Batch extends BaseBatch\n{\n\n    /**\n     * @var int\n     *\n     * @ORM\\Id\n     * @ORM\\Column(type=\ninteger\n)\n     * @ORM\\GeneratedValue(strategy=\nAUTO\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $id;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\nstatus\n, type=\nstring\n, length=255)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $status;\n\n    /**\n     * @var string\n     *\n     * @ORM\\OneToMany(targetEntity=\nOperation\n, mappedBy=\nbatch\n, cascade={\npersist\n, \nremove\n})\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     *\n     */\n    protected $operations;\n\n    /**\n     * @var integer\n     *\n     * @ORM\\Column(name=\ntotal_operations\n, type=\ninteger\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $totalOperations;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\ntotal_executed_operations\n, type=\ninteger\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $totalExecutedOperations;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\nerrors\n, type=\narray\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $errors;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\ncreated_at\n, type=\ndatetime\n)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $createdAt;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\nupdated_at\n, type=\ndatetime\n,nullable=true)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $updatedAt;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\nstarted_at\n, type=\ndatetime\n,nullable=true)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $startedAt;\n\n    /**\n     * @var \\DateTime\n     *\n     * @ORM\\Column(name=\nfinished_at\n, type=\ndatetime\n,nullable=true)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $finishedAt;\n\n    /**\n     * @var string\n     *\n     * @ORM\\Column(name=\ngroup_name\n, type=\nstring\n, length=255)\n     * @Serializer\\Groups({\nDefault\n})\n     * @Serializer\\Expose\n     */\n    protected $group;\n}\n\n\n\nConfiguration\n\n\ntake a look \nhere\n to configure the bundle", 
             "title": "Installation"
         }, 
         {
@@ -27,7 +57,7 @@
         }, 
         {
             "location": "/installation/#install-the-bundle", 
-            "text": "Add bundle to your project:  composer require batchOperation-bundle  Add  Welp\\BatchBundle\\WelpBatchBundle  to your  AppKernel.php :  $bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];", 
+            "text": "Add the bundle to your project:  composer require batchOperation-bundle  Add  Welp\\BatchBundle\\WelpBatchBundle  to your  AppKernel.php :  $bundles = [\n    // ...\n    new Welp\\BatchBundle\\WelpBatchBundle(),\n];", 
             "title": "Install the bundle"
         }, 
         {
@@ -42,7 +72,7 @@
         }, 
         {
             "location": "/configuration/", 
-            "text": "Configuration\n\n\nIn your \nconfig.yml\n:\n\n\nFull Configuration\n\n\nwelp_batch:\n    entity_manager: doctrine.orm.entity_manager #name of the entity manager service\n    broker_type: rabbitmq #type of the broker\n    broker_connection: default #name of the connection to the broker\n    batch_entity: MyBundle\\Entity\\Batch #entity which extends the batch Model\n    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files\n        batch: MyBundle\\Entity\\Batch\n        operation: MyBundle\\Entity\\Operation\n    manage_entities: #Batchable entity\n        need:\n            entity_name: MyBundle\\Entity\\Need\n            form_name: MyBundle\\Form\\NeedType\n            batch_size: 10\n            actions: ['create','delete']\n        proposition:\n            entity_name: MyBundle\\Entity\\Proposition\n            form_name: MyBundle\\Form\\PropositionType\n            batch_size: 10\n            actions: ['create']\n\n\n\nManage_entitites explanation\n\n\nYou can add as many entities as you like. Each of them must have the following attributes :\n\n\n\n\nentity_name : full name of the entity\n\n\nform_name : full name of the form corresponding to this entity. This form will be used to bind the given parameters to the new entity (see section TODO for more details)\n\n\nactions : array of action. At the moment, we only support create and delete\n\n\nbatch_size : number of message to take from the queue at a time.", 
+            "text": "Configuration\n\n\nIn your \nconfig.yml\n:\n\n\nFull Configuration\n\n\nwelp_batch:\n    entity_manager: doctrine.orm.entity_manager #name of the entity manager service\n    broker_type: rabbitmq #type of the broker\n    broker_connection: default #name of the connection to the broker\n    batch_entity: MyBundle\\Entity\\Batch #entity which extends the batch Model\n    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files\n        batch: MyBundle\\Entity\\Batch\n    manage_entities: #Batchable entity\n        need:\n            entity_name: MyBundle\\Entity\\Need\n            form_name: MyBundle\\Form\\NeedType\n            batch_size: 10\n            actions: ['create','delete']\n        proposition:\n            entity_name: MyBundle\\Entity\\Proposition\n            form_name: MyBundle\\Form\\PropositionType\n            batch_size: 10\n            actions: ['create']\n\n\n\nManage_entitites explanation\n\n\nYou can add as many entities as you like. Each of them must have the following attributes :\n\n\n\n\nentity_name : full name of the entity\n\n\nform_name : full name of the form corresponding to this entity. This form will be used to bind the given parameters to the new entity (see section TODO for more details)\n\n\nactions : array of action. At the moment, we only support create and delete\n\n\nbatch_size : number of message to take from the queue at a time.", 
             "title": "Configuration"
         }, 
         {
@@ -52,7 +82,7 @@
         }, 
         {
             "location": "/configuration/#full-configuration", 
-            "text": "welp_batch:\n    entity_manager: doctrine.orm.entity_manager #name of the entity manager service\n    broker_type: rabbitmq #type of the broker\n    broker_connection: default #name of the connection to the broker\n    batch_entity: MyBundle\\Entity\\Batch #entity which extends the batch Model\n    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files\n        batch: MyBundle\\Entity\\Batch\n        operation: MyBundle\\Entity\\Operation\n    manage_entities: #Batchable entity\n        need:\n            entity_name: MyBundle\\Entity\\Need\n            form_name: MyBundle\\Form\\NeedType\n            batch_size: 10\n            actions: ['create','delete']\n        proposition:\n            entity_name: MyBundle\\Entity\\Proposition\n            form_name: MyBundle\\Form\\PropositionType\n            batch_size: 10\n            actions: ['create']", 
+            "text": "welp_batch:\n    entity_manager: doctrine.orm.entity_manager #name of the entity manager service\n    broker_type: rabbitmq #type of the broker\n    broker_connection: default #name of the connection to the broker\n    batch_entity: MyBundle\\Entity\\Batch #entity which extends the batch Model\n    batch_results_folder: %kernel.root_dir%/../batch-results/ #Folder where we store the results files\n        batch: MyBundle\\Entity\\Batch\n    manage_entities: #Batchable entity\n        need:\n            entity_name: MyBundle\\Entity\\Need\n            form_name: MyBundle\\Form\\NeedType\n            batch_size: 10\n            actions: ['create','delete']\n        proposition:\n            entity_name: MyBundle\\Entity\\Proposition\n            form_name: MyBundle\\Form\\PropositionType\n            batch_size: 10\n            actions: ['create']", 
             "title": "Full Configuration"
         }, 
         {

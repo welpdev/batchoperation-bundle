@@ -54,6 +54,12 @@
             
                 <li class="toctree-l3"><a href="#welpbatchbundle">WelpBatchBundle</a></li>
                 
+                    <li><a class="toctree-l4" href="#features">Features</a></li>
+                
+                    <li><a class="toctree-l4" href="#delete-batch-and-operations-from-queue-and-revert-actions">[ ] Delete Batch and operations from queue, and revert actions</a></li>
+                
+                    <li><a class="toctree-l4" href="#quickstart">Quickstart</a></li>
+                
                     <li><a class="toctree-l4" href="#full-documentation">Full Documentation</a></li>
                 
             
@@ -127,6 +133,55 @@
               
                 <h1 id="welpbatchbundle">WelpBatchBundle</h1>
 <p>Symfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)</p>
+<h2 id="features">Features</h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> Support RabbitMq<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> Automatically create producer</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> Automatically create consumer</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> Automatically create queue</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> Support create/Delete Action</li>
+<li class="task-list-item"><input type="checkbox" disabled> Support custom action</li>
+<li class="task-list-item"><input type="checkbox" disabled> Exploit Batch Size</li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> Manage Batch, batch Status, Batch Event</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> Rest Controller</li>
+<li class="task-list-item"><input type="checkbox" disabled> Support Redis as a broker</li>
+<li class="task-list-item"><input type="checkbox" disabled> Support other Broker</li>
+<li>
+<h2 id="delete-batch-and-operations-from-queue-and-revert-actions">[ ] Delete Batch and operations from queue, and revert actions</h2>
+</li>
+</ul>
+<h2 id="quickstart">Quickstart</h2>
+<h3 id="add-the-bundle-to-your-project">Add the bundle to your project</h3>
+<pre class="highlight"><code class="language-bash linenums">composer require batchOperation-bundle</code></pre>
+
+<p>Add <code>Welp\BatchBundle\WelpBatchBundle</code> to your <code>AppKernel.php</code>:</p>
+<pre class="highlight"><code class="language-php linenums">$bundles = [
+    // ...
+    new Welp\BatchBundle\WelpBatchBundle(),
+];</code></pre>
+
+<h3 id="extends-the-batchmodel">Extends the BatchModel</h3>
+<p>Create a entity which extends out <code>Welp\BatchBundle\Model\BatchModel</code></p>
+<pre class="highlight"><code class="language-php linenums">use Doctrine\ORM\Mapping as ORM;
+use Welp\BatchBundle\Model\Batch as BaseBatch;
+
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name=&quot;batch&quot;)
+ * @ORM\HasLifecycleCallbacks
+ */
+class Batch extends BaseBatch{
+    ...
+}</code></pre>
+
+<h3 id="minimal-configuration">Minimal Configuration</h3>
+<pre class="highlight"><code class="language-yaml linenums">welp_batch:
+    entity_manager: doctrine.orm.entity_manager
+    batch_entity:
+        batch: MyBundle\Entity\Batch</code></pre>
+
 <h2 id="full-documentation">Full Documentation</h2>
 <p>you can find the full documentation at <a href="https://welpdev.github.io/batchoperation-bundle/">https://welpdev.github.io/batchoperation-bundle/</a></p>
               
@@ -179,5 +234,5 @@
 
 <!--
 MkDocs version : 0.16.1
-Build Date UTC : 2017-02-23 09:16:56
+Build Date UTC : 2017-02-23 10:41:06
 -->
