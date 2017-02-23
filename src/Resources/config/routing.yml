@@ -1,6 +1,3 @@
 api_batchs_resources:
     type: rest
     resource: Welp\BatchBundle\Api\Controller\BatchController
-api_oprations_resources:
-    type: rest
-    resource: Welp\BatchBundle\Api\Controller\OperationController

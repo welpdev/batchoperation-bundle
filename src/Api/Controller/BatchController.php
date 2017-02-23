@@ -59,7 +59,7 @@ class BatchController extends FOSRestController
     * @param Request $request
     * @param int $id
     */
-    public function getBatchesAction(Request $request, $id)
+    public function getBatchAction(Request $request, $id)
     {
         $batchManager = $this->get('welp_batch.batch_manager');
         $batch = $batchManager->get($id);
@@ -107,8 +107,9 @@ class BatchController extends FOSRestController
     public function postBatchesAction(Request $request)
     {
         $operations = $request->request->get('operations');
+        $group = $request->request->get('group');
         $batchManager = $this->get('welp_batch.batch_service');
-        $batch = $batchManager->create($operations);
+        $batch = $batchManager->create($operations, $group);
 
         return array(
             'success' => true,

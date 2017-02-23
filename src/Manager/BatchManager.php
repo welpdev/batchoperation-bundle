@@ -95,7 +95,12 @@ class BatchManager implements BaseManager
 
     public function findBy(array $params)
     {
-        $batches = $this->repository->findBy($params);
+        if (key_exists('group', $params) && $params['group'] != null) {
+            $batches = $this->repository->findBy($params);
+        } else {
+            $batches = $this->repository->findAll();
+        }
+
 
         return $batches;
     }

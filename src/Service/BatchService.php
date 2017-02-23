@@ -59,7 +59,7 @@ class BatchService
      * @param  array  $operations [description]
      * @return [type]             [description]
      */
-    public function create(array $operations)
+    public function create(array $operations, $group="")
     {
         //check if operations is well formatted ( it must have a type in each "row")
         foreach ($operations as $operation) {
@@ -72,6 +72,8 @@ class BatchService
         $batch->setStatus(Batch::STATUS_PENDING);
         $batch->setTotalOperations(count($operations));
         $batch->setTotalExecutedOperations(0);
+        $batch->setGroup($group);
+
         $this->batchManager->create($batch);
 
         $indexOperation = 1;
