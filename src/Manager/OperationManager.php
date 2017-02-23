@@ -11,21 +11,6 @@ use Welp\BatchBundle\Manager\ManagerInterface as BaseManager;
 class OperationManager implements BaseManager
 {
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-
-    /**
      * @var String
      */
     private $class;
@@ -37,13 +22,8 @@ class OperationManager implements BaseManager
      * @param ContainerInterface $container
      * @param String $className     Name of the class that extends our batchModel
      */
-    public function __construct($entityManager, $container, $className)
+    public function __construct()
     {
-        $this->container = $container;
-        //$this->entityManager = $this->container->get($entityManager);
-        //$this->repository = $this->entityManager->getRepository($className);
-
-        //$metadata = $this->entityManager->getClassMetadata($className);
         $this->class = "Welp\BatchBundle\Model\Operation";
     }
 
@@ -61,12 +41,8 @@ class OperationManager implements BaseManager
      */
     public function create($entity)
     {
-        //handle timestamp
         $entity->setCreatedAt(new \DateTime());
         $entity->setUpdatedAt(new \DateTime());
-
-    /*    $this->entityManager->persist($entity);
-        $this->entityManager->flush();*/
 
         return $entity;
     }
@@ -76,8 +52,6 @@ class OperationManager implements BaseManager
      */
     public function get($id)
     {
-        //$entity = $this->repository->findOneById($id);
-        //return $entity;
         return false;
     }
 
@@ -88,8 +62,6 @@ class OperationManager implements BaseManager
     {
         $entity->setUpdatedAt(new \DateTime());
         return $entity;
-        /*$this->entityManager->    persist($entity);
-        $this->entityManager->flush();*/
     }
 
     /**
@@ -98,7 +70,5 @@ class OperationManager implements BaseManager
     public function delete($entity)
     {
         return false;
-        /*$this->entityManager->remove($entity);
-        $this->entityManager->flush();*/
     }
 }

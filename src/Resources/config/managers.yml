@@ -1,7 +1,6 @@
 services:
     welp_batch.operation_manager:
         class: Welp\BatchBundle\Manager\OperationManager
-        arguments : ['%welp_batch.entity_manager%', '@service_container', %welp_batch.batch_entity.operation%, %welp_batch.batch_results_folder%]
     welp_batch.batch_manager:
         class: Welp\BatchBundle\Manager\BatchManager
         arguments : ['%welp_batch.entity_manager%', '@service_container', %welp_batch.batch_entity.batch%, %welp_batch.batch_results_folder%]
