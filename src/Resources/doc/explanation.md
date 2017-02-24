@@ -44,6 +44,12 @@ It will create Producer named
 * old_sound_rabbit_mq.welp_batch.need.delete_producer
 * old_sound_rabbit_mq.welp_batch.proposition.create_producer
 
+It will create command named
+
+* welp_batch:consumer:need.create
+* welp_batch:consumer:need.delete
+* welp_batch:consumer:proposition.create
+
 
 ## Call the batch_service
 
@@ -107,9 +113,15 @@ This message will then be publish to rabbitMQ, using the right queue, determine 
 ## Execute actions
 
 We automatically create consumers connected to all our queues.
-You have to add the consumers to your whatever you use to launch command.
 
-Consumers will get a message, and laucnh the `execute(AMQPMessage $msg)`.
+There is two ways to launch a consumer :
+
+* You can use the command `php app/console rabbitmq:consumer welp_batch.{entity}.{action}`. This will launch a php daemon.
+* You can use the rabbitmq-cli-consumer (develop in GO language) to lauch this command `rabbitmq-cli-consumer -e "app/console welp_batch:consumer:{entity}.{action}" -c app/config/rabbitmq-cli-foo-create.conf -V`
+
+You have to add the consumers to your whatever you use to launch command (for example, you can use supervisorD)
+
+Consumers will get a message, and launch the `execute(AMQPMessage $msg)`.
 
 The message will be unserialized, and the operation will be executed. Following the given action, the create or the delete method will be used.
 

@@ -138,6 +138,36 @@ class Batch extends BaseBatch
 
 ## Configuration
 
+```yaml
+welp_batch:
+    entity_manager: doctrine.orm.entity_manager
+    batch_entity:
+        batch: MyBundle\Entity\Batch
+```
 
+take a look [here](configuration.md) for the full configuration of the bundle
 
-take a look [here](configuration.md) to configure the bundle
+## Consumer
+
+We automatically create a producer for each queue. In order to launch them, you have two possibilities.
+
+* You can use the command `php app/console rabbitmq:consumer welp_batch.{entity}.{action}`. This will launch a php daemon.
+* You can use the rabbitmq-cli-consumer (develop in GO language) to lauch this command `rabbitmq-cli-consumer -e "app/console welp_batch:consumer:{entity}.{action}" -c app/config/rabbitmq-cli-foo-create.conf -V`
+
+For example, rabbitlmq-cli-foo-create.conf
+
+```
+[rabbitmq]
+host=localhost
+port=5672/
+username=user
+password=pwd
+vhost=vhost
+queue=welp.batch.foo.create
+compression=off
+
+[logs]
+error = /tmp/rabbitcli/error.log
+info = /tmp/rabbitcli/info.log
+
+```
