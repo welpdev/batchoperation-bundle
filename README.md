@@ -9,6 +9,7 @@ Symfony Bundle to manage batch operation. You can choose whatever broker you wan
     - [x] Automatically create consumer
     - [x] Automatically create queue
     - [x] Support create/Delete Action
+    - [x] Dispatch Event with the entity created/deleted
     - [ ] Support custom action
     - [ ] Exploit Batch Size
 - [x] Manage Batch, batch Status, Batch Event

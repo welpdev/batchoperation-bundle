@@ -12,6 +12,8 @@ use Welp\BatchBundle\Event\BatchEvent;
 use Welp\BatchBundle\Event\OperationEvent;
 use Welp\BatchBundle\Event\BatchErrorEvent;
 use Welp\BatchBundle\Event\OperationErrorEvent;
+use Welp\BatchBundle\Event\BatchEntityDeletedEvent;
+use Welp\BatchBundle\Event\BatchEntityCreatedEvent;
 use Welp\BatchBundle\Exception\BatchException;
 use Welp\BatchBundle\Exception\OperationException;
 use Welp\BatchBundle\Model\BatchInterface;
@@ -108,6 +110,9 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
+
+        $eventCreated = new BatchEntityCreatedEvent($entity, $this->className);
+        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_CREATED, $eventCreated);
     }
 
     /**
@@ -123,6 +128,9 @@ class RabbitMQConsumer implements ConsumerInterface
         if ($entity == null) {
             throw new BatchException(404, $this->className.' not found', $batch);
         }
+
+        $eventDeleted = new BatchEntityDeletedEvent($entity, $this->className);
+        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_DELETED, $eventDeleted);
 
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
