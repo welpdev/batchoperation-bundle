@@ -133,8 +133,10 @@ During the process of the excution of the producers, we dispatch some events
 * WELP_BATCH_OPERATION_STARTED
 * WELP_BATCH_OPERATION_FINISHED
 * WELP_BATCH_OPERATION_ERROR
+* WELP_BATCH_ENTITY_CREATED
+* WELP_BATCH_ENTITY_DELETED
 
-Events are listened in the `OperationListener.php`.
+Some Events are listened in the `OperationListener.php`.
 
 When the `WELP_BATCH_OPERATION_STARTED` event is raised, we update the status of the operation, and if necessary, the status of the batch.
 

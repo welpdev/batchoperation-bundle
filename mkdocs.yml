@@ -10,8 +10,8 @@ pages:
     - Installation: installation.md
     - Configuration: configuration.md
     - API : api.md
-    - Explanation: explanation.md
     - Events : event.md
+    - Explanation: explanation.md
 theme: readthedocs
 markdown_extensions:
     - pymdownx.github
