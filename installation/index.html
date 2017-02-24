@@ -67,6 +67,8 @@
                 
                     <li><a class="toctree-l4" href="#configuration">Configuration</a></li>
                 
+                    <li><a class="toctree-l4" href="#consumer">Consumer</a></li>
+                
             
             </ul>
         
@@ -89,14 +91,14 @@
           
             <li>
     <li class="toctree-l1 ">
-        <a class="" href="../explanation/">Explanation</a>
+        <a class="" href="../event/">Events</a>
         
     </li>
 <li>
           
             <li>
     <li class="toctree-l1 ">
-        <a class="" href="../event/">Events</a>
+        <a class="" href="../explanation/">Explanation</a>
         
     </li>
 <li>
@@ -262,7 +264,32 @@ class Batch extends BaseBatch
 }</code></pre>
 
 <h2 id="configuration">Configuration</h2>
-<p>take a look <a href="../configuration/">here</a> to configure the bundle</p>
+<pre class="highlight"><code class="language-yaml linenums">welp_batch:
+    entity_manager: doctrine.orm.entity_manager
+    batch_entity:
+        batch: MyBundle\Entity\Batch</code></pre>
+
+<p>take a look <a href="../configuration/">here</a> for the full configuration of the bundle</p>
+<h2 id="consumer">Consumer</h2>
+<p>We automatically create a producer for each queue. In order to launch them, you have two possibilities.</p>
+<ul>
+<li>You can use the command <code>php app/console rabbitmq:consumer welp_batch.{entity}.{action}</code>. This will launch a php daemon.</li>
+<li>You can use the rabbitmq-cli-consumer (develop in GO language) to lauch this command <code>rabbitmq-cli-consumer -e "app/console welp_batch:consumer:{entity}.{action}" -c app/config/rabbitmq-cli-foo-create.conf -V</code></li>
+</ul>
+<p>For example, rabbitlmq-cli-foo-create.conf</p>
+<pre class="highlight"><code class="linenums">[rabbitmq]
+host=localhost
+port=5672/
+username=user
+password=pwd
+vhost=vhost
+queue=welp.batch.foo.create
+compression=off
+
+[logs]
+error = /tmp/rabbitcli/error.log
+info = /tmp/rabbitcli/info.log
+</code></pre>
               
             </div>
           </div>

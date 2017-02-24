@@ -75,13 +75,6 @@
 <li>
           
             <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../explanation/">Explanation</a>
-        
-    </li>
-<li>
-          
-            <li>
     <li class="toctree-l1 current">
         <a class="current" href="./">Events</a>
         
@@ -93,10 +86,21 @@
                 
                     <li><a class="toctree-l4" href="#when-are-they-raised">When are they raised ?</a></li>
                 
-                    <li><a class="toctree-l4" href="#event-listener">Event Listener</a></li>
+                    <li><a class="toctree-l4" href="#event-listener-of-our-bundle">Event Listener of our bundle</a></li>
+                
+                    <li><a class="toctree-l4" href="#event-entity">Event Entity</a></li>
+                
+                    <li><a class="toctree-l4" href="#synchronisation-with-your-application">Synchronisation with your application</a></li>
                 
             
             </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../explanation/">Explanation</a>
         
     </li>
 <li>
@@ -142,6 +146,8 @@
 <li>WelpBatchEvent::WELP_BATCH_OPERATION_STARTED</li>
 <li>WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED</li>
 <li>WelpBatchEvent::WELP_BATCH_OPERATION_ERROR</li>
+<li>WelpBatchEvent::WELP_BATCH_ENTITY_CREATED</li>
+<li>WelpBatchEvent::WELP_BATCH_ENTITY_DELETED</li>
 </ul>
 <h2 id="where-to-find-events">Where to find Events ?</h2>
 <p>All our events are declared in the <code>Welp\BatchBundle\WelpBatchEvent</code></p>
@@ -156,7 +162,11 @@
 <li>Entity not found (the id given in the payload doesn't match any id the database)</li>
 <li>Form error (the payload given to be bind to the form is nor correct =&gt; Extra Fields, required field not given)</li>
 </ul>
-<h2 id="event-listener">Event Listener</h2>
+<h3 id="welpbatcheventwelp_batch_entity_created">WelpBatchEvent::WELP_BATCH_ENTITY_CREATED</h3>
+<p>This one is raised when a entity is created by a consumer</p>
+<h3 id="welpbatcheventwelp_batch_entity_deleted">WelpBatchEvent::WELP_BATCH_ENTITY_DELETED</h3>
+<p>This one is raised when a entity is deleted by a consumer</p>
+<h2 id="event-listener-of-our-bundle">Event Listener of our bundle</h2>
 <p>Our event listener is here : <code>Welp\BatchBundle\EventListener\OperationListener</code></p>
 <pre class="highlight"><code class="language-php linenums">return [
     WelpBatchEvent::WELP_BATCH_OPERATION_STARTED =&gt; 'startOperation',
@@ -170,6 +180,48 @@
 <p>When this event is raised, we update the Status of the batch. If all operations are finished, we create the file containing the results</p>
 <h3 id="welpbatcheventwelp_batch_operation_error_1">WelpBatchEvent::WELP_BATCH_OPERATION_ERROR</h3>
 <p>When this event is raised, we update the status of the batch, and we add an error to the errors array of the batch. This array will then be used for formatting the result file.</p>
+<h2 id="event-entity">Event Entity</h2>
+<p>All our event are in the namespace <code>Welp\BatchBundle\Event</code></p>
+<h3 id="batchevent">BatchEvent</h3>
+<p>This event contain the batch, and the operationId. It is use when the <code>WelpBatchEvent::WELP_BATCH_OPERATION_STARTED</code> and the <code>WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED</code> are dispatch.</p>
+<p>You can access those properties with our getters</p>
+<pre class="highlight"><code class="language-php linenums">public function test(BatchEvent $event)
+{
+    $batch = $event-&gt;getBatch();
+    $operationId = $event-&gt;getOperationId();
+}</code></pre>
+
+<h3 id="batcherrorevent">BatchErrorEvent</h3>
+<p>This event contain the batch, the error and the operationId. It is use when the <code>WelpBatchEvent::WELP_BATCH_OPERATION_ERROR</code> is dispatch</p>
+<p>You can access those properties with our getters</p>
+<pre class="highlight"><code class="language-php linenums">public function test(BatchErrorEvent $event)
+{
+    $batch = $event-&gt;getBatch();
+    $operationId = $event-&gt;getOperationId();
+    $error = $event-&gt;getError();
+}</code></pre>
+
+<h3 id="batchentitycreatedevent">BatchEntityCreatedEvent</h3>
+<p>This event contain the created entity and the className of the created entity. It is use when the <code>WelpBatchEvent::WELP_BATCH_ENTITY_CREATED</code> is dispatch</p>
+<p>You can access those properties with our getters</p>
+<pre class="highlight"><code class="language-php linenums">public function test(BatchEntityCreatedEvent $event)
+{
+    $entity = $event-&gt;getEntity();
+    $className = $event-&gt;getClassName();
+}</code></pre>
+
+<h3 id="batchentitydeletedevent">BatchEntityDeletedEvent</h3>
+<p>This event contain the created entity and the className of the created entity. It is use when the <code>WelpBatchEvent::WELP_BATCH_ENTITY_DELETED</code> is dispatch</p>
+<p>You can access those properties with our getters</p>
+<pre class="highlight"><code class="language-php linenums">public function test(BatchEntityDeletedEvent $event)
+{
+    $entity = $event-&gt;getEntity();
+    $className = $event-&gt;getClassName();
+}</code></pre>
+
+<h2 id="synchronisation-with-your-application">Synchronisation with your application</h2>
+<p>If you want to launch some custom action when a entity is created/deleted, we advise you to listen to the <code>WelpBatchEvent::WELP_BATCH_ENTITY_CREATED</code> and the <code>WelpBatchEvent::WELP_BATCH_ENTITY_DELETED</code> events.</p>
+<p>You will be able to get the entity, and made custom actions on it.</p>
               
             </div>
           </div>
@@ -177,8 +229,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../explanation/" class="btn btn-neutral float-right" title="Explanation">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-        <a href="../explanation/" class="btn btn-neutral" title="Explanation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+        <a href="../api/" class="btn btn-neutral" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -208,8 +262,10 @@
           <a href="https://github.com/welpdev/batchoperation-bundle" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../explanation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../api/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
+      
+        <span style="margin-left: 15px"><a href="../explanation/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

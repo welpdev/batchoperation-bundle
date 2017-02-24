@@ -75,6 +75,13 @@
 <li>
           
             <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../event/">Events</a>
+        
+    </li>
+<li>
+          
+            <li>
     <li class="toctree-l1 current">
         <a class="current" href="./">Explanation</a>
         
@@ -98,13 +105,6 @@
                 
             
             </ul>
-        
-    </li>
-<li>
-          
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../event/">Events</a>
         
     </li>
 <li>
@@ -185,6 +185,12 @@
 <li>old_sound_rabbit_mq.welp_batch.need.delete_producer</li>
 <li>old_sound_rabbit_mq.welp_batch.proposition.create_producer</li>
 </ul>
+<p>It will create command named</p>
+<ul>
+<li>welp_batch:consumer:need.create</li>
+<li>welp_batch:consumer:need.delete</li>
+<li>welp_batch:consumer:proposition.create</li>
+</ul>
 <h2 id="call-the-batch_service">Call the batch_service</h2>
 <p>The service is called <code>welp_batch.batch_service</code>. It is the main entrance to this bundle. You can use it in your controller, or you can use our REST controller.</p>
 <p>This service provide a create method. This method accept an array parameter, which contain all the operations you want to batch.
@@ -230,9 +236,14 @@ Those operations are transmit to the <code>welp_batch.producer</code> thanks to 
 
 <p>This message will then be publish to rabbitMQ, using the right queue, determine with the type of the entity and the action</p>
 <h2 id="execute-actions">Execute actions</h2>
-<p>We automatically create consumers connected to all our queues.
-You have to add the consumers to your whatever you use to launch command.</p>
-<p>Consumers will get a message, and laucnh the <code>execute(AMQPMessage $msg)</code>.</p>
+<p>We automatically create consumers connected to all our queues.</p>
+<p>There is two ways to launch a consumer :</p>
+<ul>
+<li>You can use the command <code>php app/console rabbitmq:consumer welp_batch.{entity}.{action}</code>. This will launch a php daemon.</li>
+<li>You can use the rabbitmq-cli-consumer (develop in GO language) to lauch this command <code>rabbitmq-cli-consumer -e "app/console welp_batch:consumer:{entity}.{action}" -c app/config/rabbitmq-cli-foo-create.conf -V</code></li>
+</ul>
+<p>You have to add the consumers to your whatever you use to launch command (for example, you can use supervisorD)</p>
+<p>Consumers will get a message, and launch the <code>execute(AMQPMessage $msg)</code>.</p>
 <p>The message will be unserialized, and the operation will be executed. Following the given action, the create or the delete method will be used.</p>
 <h2 id="update-batchoperation-status">Update batch/operation status</h2>
 <p>During the process of the excution of the producers, we dispatch some events</p>
@@ -240,8 +251,10 @@ You have to add the consumers to your whatever you use to launch command.</p>
 <li>WELP_BATCH_OPERATION_STARTED</li>
 <li>WELP_BATCH_OPERATION_FINISHED</li>
 <li>WELP_BATCH_OPERATION_ERROR</li>
+<li>WELP_BATCH_ENTITY_CREATED</li>
+<li>WELP_BATCH_ENTITY_DELETED</li>
 </ul>
-<p>Events are listened in the <code>OperationListener.php</code>.</p>
+<p>Some Events are listened in the <code>OperationListener.php</code>.</p>
 <p>When the <code>WELP_BATCH_OPERATION_STARTED</code> event is raised, we update the status of the operation, and if necessary, the status of the batch.</p>
 <p>When the <code>WELP_BATCH_OPERATION_ERROR</code> event is raised, we update the status of the operation, and we add the code and the message of the error in the error array.</p>
 <p>When the <code>WELP_BATCH_OPERATION_FINISHED</code> event is raised, we update the status of the operation. If all operations are finished, we update the status of the batch, and we merge all errors in the batch error array.</p>
@@ -254,10 +267,8 @@ You have to add the consumers to your whatever you use to launch command.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../event/" class="btn btn-neutral float-right" title="Events">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="../api/" class="btn btn-neutral" title="API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../event/" class="btn btn-neutral" title="Events"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -287,10 +298,8 @@ You have to add the consumers to your whatever you use to launch command.</p>
           <a href="https://github.com/welpdev/batchoperation-bundle" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
-        <span><a href="../api/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../event/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
-      
-        <span style="margin-left: 15px"><a href="../event/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
