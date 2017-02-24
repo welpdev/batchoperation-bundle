@@ -3,12 +3,14 @@
 namespace Welp\BatchBundle\Api\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Request\ParamFetcher;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class BatchController extends FOSRestController
 {
@@ -72,19 +74,17 @@ class BatchController extends FOSRestController
         );
     }
     /**
-     * @Rest\View(serializerEnableMaxDepthChecks=true)
+     * @Rest\View()
      */
-    public function getBatchesResultsAction(Request $request, $id)
-    {
-        $batchManager = $this->get('welp_batch.batch_manager');
+     public function getBatchesResultsAction(Request $request, $id)
+     {
+         $batchManager = $this->get('welp_batch.batch_manager');
 
-        $file = $batchManager->getResultFile($id);
+         $file = $batchManager->getResultFile($id);
 
-        return array(
-            'success' =>true,
-            'file'=> $file
-        );
-    }
+         $response = new BinaryFileResponse($file);
+         return $response;
+     }
 
     /**
     *

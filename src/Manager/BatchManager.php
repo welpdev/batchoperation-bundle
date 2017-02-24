@@ -193,7 +193,7 @@ class BatchManager implements BaseManager
         }
 
         $fs->dumpFile($fileName, $content);
-        return $content;
+        return $fileName;
     }
 
     /**
@@ -216,13 +216,13 @@ class BatchManager implements BaseManager
 
         if (count($files)> 0) {
             $file = end($files);
-            $content = $file->getContents();
+            $fileName = $file->getRealPath();
         } else {
-            $content = $this->generateResults($batch);
+            $fileName = $this->generateResults($batch);
         }
 
-        $content = $content;
-        return $content;
+        $fileName = $fileName;
+        return $fileName;
     }
 
     public function formatMessage($operationId, $consumerMessage=null)
