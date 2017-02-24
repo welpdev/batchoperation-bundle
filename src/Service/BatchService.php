@@ -2,13 +2,13 @@
 
 namespace Welp\BatchBundle\Service;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Welp\BatchBundle\Manager\BatchManager;
 use Welp\BatchBundle\Manager\OperationManager;
 use Welp\BatchBundle\Model\Batch;
 use Welp\BatchBundle\Model\Operation;
 use Welp\BatchBundle\Model\BatchInterface;
+use Welp\BatchBundle\Producer\ProducerInterface;
 
 /**
  * batch Service
@@ -16,15 +16,10 @@ use Welp\BatchBundle\Model\BatchInterface;
 class BatchService
 {
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      *
-     * @var ContainerInterface
+     * @var ProducerInterface
      */
-    private $container;
+    private $producer;
 
     /**
      *
@@ -40,17 +35,15 @@ class BatchService
 
     /**
      *
-     * @param String $entityManager    Name of the entityManager service
-     * @param ContainerInterface $container
      * @param BatchManager $batchManager
      * @param OperationManager $operationManager
+     * @param ProducerInterface $producer
      */
-    public function __construct($entityManager, $container, $batchManager, $operationManager)
+    public function __construct($batchManager, $operationManager, $producer)
     {
-        $this->container = $container;
-        $this->entityManager = $this->container->get($entityManager);
         $this->operationManager = $operationManager;
         $this->batchManager = $batchManager;
+        $this->producer = $producer;
     }
 
     /**
@@ -92,7 +85,7 @@ class BatchService
             $operation->setPayload($ope['payload']);
             $batch->addOperations($ope);
             $this->operationManager->create($operation);
-            $this->container->get('welp_batch.producer')->produce($operation, $batch->getId(), $type, $action);
+            $this->producer->produce($operation, $batch->getId(), $type, $action);
         }
         $this->batchManager->update($batch);
 

@@ -4,19 +4,25 @@ namespace Welp\BatchBundle\Consumer\AMQP;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+
+use Symfony\Component\Form\FormFactory;
+
 use Welp\BatchBundle\WelpBatchEvent;
 use Welp\BatchBundle\Event\BatchEvent;
-use Welp\BatchBundle\Event\OperationEvent;
 use Welp\BatchBundle\Event\BatchErrorEvent;
-use Welp\BatchBundle\Event\OperationErrorEvent;
 use Welp\BatchBundle\Event\BatchEntityDeletedEvent;
 use Welp\BatchBundle\Event\BatchEntityCreatedEvent;
+
 use Welp\BatchBundle\Exception\BatchException;
 use Welp\BatchBundle\Exception\OperationException;
+
+use Welp\BatchBundle\Manager\BatchManager;
 use Welp\BatchBundle\Model\BatchInterface;
+
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * WelpBatch Consumer class when using the rabbitMQ broker Type
@@ -24,9 +30,11 @@ use Welp\BatchBundle\Model\BatchInterface;
 class RabbitMQConsumer implements ConsumerInterface
 {
     /**
-     * @var ContainerAwareInterface $container
+     *
+     * @var EventDispatcher
      */
-    private $container;
+    private $eventDispatcher;
+
     /**
      * @var String $className
      */
@@ -48,19 +56,35 @@ class RabbitMQConsumer implements ConsumerInterface
     private $repository;
 
     /**
+     *
+     * @var FormFactory
+     */
+    private $formFactory;
+
+    /**
+     *
+     * @var BatchManager
+     */
+    private $batchManager;
+
+    /**
      * COnstructor of the consumer. This function is called when initializing the service
-     * @param ContainerAwareInterface $container     Service Container
      * @param String $className     Fullname of the class the operation will create
      * @param String $form          Fullname of the form class to use for binding data to the new entity
      * @param String $entityManager Name of the entityManager service
+     * @param EventDispatcher $eventManager Event dispatcher
+     * @param BatchManager $batchManager
+     * @param FormFactory $formFactory Name of the entityManager service
      */
-    public function __construct($container, $className, $form, $entityManager)
+    public function __construct($className, $form, $entityManager, $eventDispatcher, $batchManager, $formFactory)
     {
-        $this->container = $container;
+        $this->batchManager = $batchManager;
         $this->className = $className;
         $this->form = $form;
-        $this->entityManager = $this->container->get($entityManager);
+        $this->entityManager = $entityManager;
         $this->repository = $this->entityManager->getRepository($className);
+        $this->eventDispatcher = $eventDispatcher;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -74,10 +98,10 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $operationPayload = $temp['operationPayload'];
 
-        $batch = $this->container->get('welp_batch.batch_manager')->get($temp['batchId']);
+        $batch = $this->batchManager->get($temp['batchId']);
 
         $event = new BatchEvent($batch, $temp['operationId']);
-        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_STARTED, $event);
+        $this->eventDispatcher->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_STARTED, $event);
 
         $action = $temp['action'];
 
@@ -85,11 +109,11 @@ class RabbitMQConsumer implements ConsumerInterface
             $message = $this->$action($operationPayload, $batch);
         } catch (BatchException $e) {
             $event = new BatchErrorEvent($batch, $e->getMessage(), $temp['operationId']);
-            $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_ERROR, $event);
+            $this->eventDispatcher->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_ERROR, $event);
             return true;
         }
         $event = $event = new BatchEvent($batch, $temp['operationId'], $message);
-        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
+        $this->eventDispatcher->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
         return true;
     }
 
@@ -101,7 +125,7 @@ class RabbitMQConsumer implements ConsumerInterface
     public function create($operationPayload, $batch)
     {
         $entity = new $this->className();
-        $form = $this->container->get('form.factory')->create(new $this->form(), $entity);
+        $form = $this->formFactory->create(new $this->form(), $entity);
         $form->bind($operationPayload);
 
         if (!$form->isValid()) {
@@ -112,7 +136,7 @@ class RabbitMQConsumer implements ConsumerInterface
         $this->entityManager->flush();
 
         $eventCreated = new BatchEntityCreatedEvent($entity, $this->className);
-        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_CREATED, $eventCreated);
+        $this->eventDispatcher->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_CREATED, $eventCreated);
 
         return array(
             'message' => $this->className.' created',
@@ -135,7 +159,7 @@ class RabbitMQConsumer implements ConsumerInterface
         }
 
         $eventDeleted = new BatchEntityDeletedEvent($entity, $this->className);
-        $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_DELETED, $eventDeleted);
+        $this->eventDispatcher->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_DELETED, $eventDeleted);
 
         $this->entityManager->remove($entity);
         $this->entityManager->flush();

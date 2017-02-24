@@ -35,11 +35,14 @@ class WelpBatchExtension extends Extension
         $container->setParameter('welp_batch.broker_connection', $config['broker_connection']);
         $container->setParameter('welp_batch.batch_results_folder', $config['batch_results_folder']);
 
+        $container->setAlias('welp_batch.entity_manager', $config['entity_manager']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load($config['broker_type'].'.yml');
         $loader->load('managers.yml');
         $loader->load('listeners.yml');
+
+
 
         if ($config['broker_type'] == 'rabbitmq') {
             if (!isset($bundles['OldSoundRabbitMqBundle'])) { // TODO check wihch exception to raise
@@ -145,7 +148,7 @@ class WelpBatchExtension extends Extension
      */
     public function createConsumerService($name, $entity)
     {
-        $definition = new Definition('Welp\BatchBundle\Consumer\AMQP\RabbitMQConsumer', array(new Reference('service_container'),$entity['entity_name'],$entity['form_name'],'%welp_batch.entity_manager%'));
+        $definition = new Definition('Welp\BatchBundle\Consumer\AMQP\RabbitMQConsumer', array($entity['entity_name'],$entity['form_name'],new Reference('welp_batch.entity_manager'),new Reference('event_dispatcher'), new Reference('welp_batch.batch_manager'), new Reference('form.factory')));
         $this->container->setDefinition('welp_batch.'.$name, $definition);
 
         return 'welp_batch.'.$name;

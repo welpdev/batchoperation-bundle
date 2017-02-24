@@ -5,7 +5,6 @@ namespace Welp\BatchBundle\Manager;
 use JsonSerializable;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Welp\BatchBundle\Model\Batch;
 use Welp\BatchBundle\Manager\ManagerInterface as BaseManager;
 use Welp\BatchBundle\Model\BatchInterface;
@@ -26,11 +25,6 @@ class BatchManager implements BaseManager
     private $entityManager;
 
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var EntityRepository
      */
     private $repository;
@@ -48,14 +42,13 @@ class BatchManager implements BaseManager
 
     /**
      *
-     * @param String $entityManager name of the entitytyManager service
-     * @param ContainerInterface $container
+     * @param EntityManager $entityManager name of the entitytyManager service
      * @param String $className     Name of the class that extends our batchModel
+     * @param String $folderName Name of the folder when results file will be created
      */
-    public function __construct($entityManager, $container, $className, $folderName)
+    public function __construct($entityManager, $className, $folderName)
     {
-        $this->container = $container;
-        $this->entityManager = $this->container->get($entityManager);
+        $this->entityManager = $entityManager;
         $this->repository = $this->entityManager->getRepository($className);
         $this->folderName = $folderName;
         $this->class = $className;
