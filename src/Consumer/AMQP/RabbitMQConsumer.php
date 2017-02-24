@@ -76,19 +76,19 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $batch = $this->container->get('welp_batch.batch_manager')->get($temp['batchId']);
 
-        $event = new BatchEvent($batch, $this->className.'.'.$temp['action'].'.'.$temp['operationId']);
+        $event = new BatchEvent($batch, $temp['operationId']);
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_STARTED, $event);
 
         $action = $temp['action'];
 
         try {
-            $this->$action($operationPayload, $batch);
+            $message = $this->$action($operationPayload, $batch);
         } catch (BatchException $e) {
             $event = new BatchErrorEvent($batch, $e->getMessage(), $temp['operationId']);
             $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_ERROR, $event);
             return true;
         }
-
+        $event = $event = new BatchEvent($batch, $temp['operationId'], $message);
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_OPERATION_FINISHED, $event);
         return true;
     }
@@ -113,6 +113,11 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $eventCreated = new BatchEntityCreatedEvent($entity, $this->className);
         $this->container->get('event_dispatcher')->dispatch(WelpBatchEvent::WELP_BATCH_ENTITY_CREATED, $eventCreated);
+
+        return array(
+            'message' => $this->className.' created',
+            'id' => $entity->getId()
+        );
     }
 
     /**
@@ -134,5 +139,10 @@ class RabbitMQConsumer implements ConsumerInterface
 
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+
+        return array(
+            'message' => $this->className.' deleted',
+            'id' => $id
+        );
     }
 }

@@ -15,19 +15,24 @@ class BatchEvent extends Event
      * @var BatchInterface
      */
     protected $batch;
-    
+
     /**
      * @var integer
      */
     protected $operationId;
 
     /**
+     * @var mixed
+     */
+    protected $consumerMessage;
+    /**
      * @param Batch $batch batch which raise the event
      */
-    public function __construct(Batch $batch, $operationId)
+    public function __construct(Batch $batch, $operationId, $consumerMessage=null)
     {
         $this->batch = $batch;
         $this->operationId = $operationId;
+        $this->consumerMessage = $consumerMessage;
     }
 
     /**
@@ -37,9 +42,14 @@ class BatchEvent extends Event
     {
         return $this->batch;
     }
-    
+
     public function getOperationId()
     {
         return $this->operationId;
+    }
+
+    public function getConsumerMessage()
+    {
+        return $this->consumerMessage;
     }
 }

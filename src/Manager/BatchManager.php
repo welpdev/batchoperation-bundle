@@ -120,18 +120,18 @@ class BatchManager implements BaseManager
         return $entity;
     }
 
-    public function addExecutedOperation($batch, $operationId)
+    public function addExecutedOperation($batch, $message)
     {
         $this->entityManager->getConnection()->beginTransaction();
         try {
             $test = $this->entityManager->find($this->class, $batch->getId(), LockMode::PESSIMISTIC_WRITE);
-            $batch->addExecutedOperations($operationId);
+            $batch->addExecutedOperations($message);
             $this->entityManager->persist($batch);
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
         } catch (\Exception $ex) {
             $this->entityManager->getConnection()->rollback();
-            $this->addExecutedOperation($batch, $operationId);
+            $this->addExecutedOperation($batch, $message);
         }
 
         return $batch;
@@ -171,12 +171,16 @@ class BatchManager implements BaseManager
             $result = array();
             $result['operationId'] = $operation['operationId'];
             $result['error'] = false;
-            
+
             if (count($test)>0) {
                 $result['text'] = reset($test)["error"];
                 $result['error'] = true;
             } else {
-                $result['message'] = 'operation OK';
+                $executedOperation = array_filter($batch->getExecutedOperations(), function ($e) use ($operation) {
+                    return $e['operationId'] == $operation['operationId'];
+                });
+
+                $result['message'] = reset($executedOperation)['message'];
             }
 
             $arrayResponses[] = $result;
@@ -219,5 +223,15 @@ class BatchManager implements BaseManager
 
         $content = $content;
         return $content;
+    }
+
+    public function formatMessage($operationId, $consumerMessage=null)
+    {
+        if ($consumerMessage == null) {
+            return array('operationId' => $operationId);
+        }
+
+        $message = array('operationId' => $operationId, 'message' => $consumerMessage);
+        return $message;
     }
 }
