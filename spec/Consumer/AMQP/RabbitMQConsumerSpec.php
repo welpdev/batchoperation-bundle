@@ -2,6 +2,7 @@
 
 namespace spec\Welp\BatchBundle\Consumer\AMQP;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Welp\BatchBundle\Consumer\AMQP\RabbitMQConsumer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -20,14 +21,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Welp\BatchBundle\WelpBatchEvent;
 
+use Symfony\Component\Form\FormFactory;
+
 class RabbitMQConsumerSpec extends ObjectBehavior
 {
-    public function let(ServiceContainer $container, ObjectManager $em, ObjectRepository $repository)
+    public function let(ServiceContainer $container, ObjectManager $em, ObjectRepository $repository, EventDispatcher $dispatcher, BatchManager $batchManager, FormFactory $formFactory)
     {
         $container->get("doctrine.orm.entity_manager")->willReturn($em);
         $em->getRepository("FooBundle\Entity\Test")->willReturn($repository);
 
-        $this->beConstructedWith($container, 'FooBundle\Entity\Test', 'FooBundle\Form\Test', "doctrine.orm.entity_manager");
+        $this->beConstructedWith('FooBundle\Entity\Test', 'FooBundle\Form\Test', $em, $dispatcher, $batchManager, $formFactory);
     }
 
     public function it_is_initializable()

@@ -19,11 +19,10 @@ use Symfony\Component\Finder\Finder;
 
 class BatchManagerSpec extends ObjectBehavior
 {
-    public function let(ServiceContainer $container, ObjectManager $em, ObjectRepository $repository)
+    public function let(ObjectManager $em, ObjectRepository $repository)
     {
-        $container->get("doctrine.orm.entity_manager")->willReturn($em);
         $em->getRepository("Welp\BatchBundle\Model\Batch")->willReturn($repository);
-        $this->beConstructedWith("doctrine.orm.entity_manager", $container, "Welp\BatchBundle\Model\Batch", 'test/');
+        $this->beConstructedWith($em, "Welp\BatchBundle\Model\Batch", 'test/');
     }
 
     public function it_is_initializable()

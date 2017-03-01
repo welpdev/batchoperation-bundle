@@ -19,11 +19,9 @@ use Welp\BatchBundle\Producer\ProducerInterface;
 
 class BatchServiceSpec extends ObjectBehavior
 {
-    public function let(ServiceContainer $container, ObjectManager $em, BatchManager $batchManager, OperationManager $operationManager)
+    public function let(BatchManager $batchManager, OperationManager $operationManager, ProducerInterface $producer)
     {
-        $container->get("doctrine.orm.entity_manager")->willReturn($em);
-
-        $this->beConstructedWith('doctrine.orm.entity_manager', $container, $batchManager, $operationManager);
+        $this->beConstructedWith($batchManager, $operationManager, $producer);
     }
 
     public function it_is_initializable()
