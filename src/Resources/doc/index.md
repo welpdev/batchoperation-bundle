@@ -23,7 +23,7 @@ Symfony Bundle to manage batch operation. You can choose whatever broker you wan
 ### Add the bundle to your project
 
 ```bash
-composer require batchOperation-bundle
+composer require welp/batch-operation-bundle
 ```
 
 Add `Welp\BatchBundle\WelpBatchBundle` to your `AppKernel.php`:
