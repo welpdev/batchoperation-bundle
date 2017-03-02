@@ -56,12 +56,6 @@ class ConsumerTest extends baseTestRMQ
             ->withAnyParameters()
             ->willReturn($eventDispatcher->dispatch(null));
 
-        /*$callBack->expects($this->once())
-            ->method('create')
-            ->withAnyParameters()
-            ->willReturn(true);*/
-
-
         $test = new AMQPMessage(serialize(array_splice($amqpChannel->callbacks, 0, 1)[0]));
 
 
