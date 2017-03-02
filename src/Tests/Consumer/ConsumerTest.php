@@ -42,17 +42,36 @@ class ConsumerTest extends baseTestRMQ
         $amqpChannel->callbacks = $consumerCallBacks;
         $consumer->setCallBack($callBack);
 
-        $callBack->expects($this->once())
-            ->method('execute')
+        $eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
+            ->getMock();
+
+        $callBack->setEventDispatcher($eventDispatcher);
+        $eventDispatcher->expects($this->atLeastOnce())
+            ->method('dispatch')
             ->withAnyParameters()
             ->willReturn(true);
+
+        $callBack->expects($this->any())
+            ->method('execute')
+            ->withAnyParameters()
+            ->willReturn($eventDispatcher->dispatch(null));
+
+        /*$callBack->expects($this->once())
+            ->method('create')
+            ->withAnyParameters()
+            ->willReturn(true);*/
+
+
+        $test = new AMQPMessage(serialize(array_splice($amqpChannel->callbacks, 0, 1)[0]));
+
 
         $amqpChannel->expects($this->exactly(0))
             ->method('wait')
             ->with(null, false, $consumer->getIdleTimeout())
-            ->will($this->returnCallback($callBack->execute(new AMQPMessage(serialize(array_splice($amqpChannel->callbacks, 0, 1)[0]))))
+            ->will($this->returnCallback($callBack->execute($test))
         );
         $consumer->consume(1);
+        $callBack->execute($test);
     }
 
     /**

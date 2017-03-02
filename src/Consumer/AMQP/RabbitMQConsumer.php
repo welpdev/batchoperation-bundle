@@ -169,4 +169,13 @@ class RabbitMQConsumer implements ConsumerInterface
             'id' => $id
         );
     }
+
+    /**
+     *
+     * @param EventDispatcher $eventDispatcher
+     */
+    public function setEventDispatcher($eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 }
