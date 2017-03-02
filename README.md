@@ -1,5 +1,9 @@
 # WelpBatchBundle
 
+[![Build Status](https://travis-ci.org/welpdev/batchoperation-bundle.svg?branch=master)](https://travis-ci.org/welpdev/batchoperation-bundle)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/welpdev/batchoperation-bundle/master/LICENSE)
+[![Documentation](https://img.shields.io/badge/documentation-gh--pages-blue.svg)](https://welpdev.github.io/batchoperation-bundle)
+
 Symfony Bundle to manage batch operation. You can choose whatever broker you want (default is RabbitMq)
 
 ## Features
