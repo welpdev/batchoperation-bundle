@@ -1,5 +1,7 @@
 <?php
 
+namespace Welp\BatchBundle\Tests\Consumer;
+
 use OldSound\RabbitMqBundle\Tests\RabbitMq\ConsumerTest as baseTestRMQ;
 use PhpAmqpLib\Message\AMQPMessage;
 
