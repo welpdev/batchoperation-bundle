@@ -95,6 +95,7 @@ class BatchController extends FOSRestController
     *   section = "Batches",
     *   parameters ={
     *       {"name"="operations", "dataType"="array","required"=true, "description"="title of the category"},
+    *       {"name"="group", "dataType"="string","required"=true, "description"="group name of the batch"},
     *   },
     *   statusCodes={
     *       200="Returned when successful",
