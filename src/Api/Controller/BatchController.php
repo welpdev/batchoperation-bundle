@@ -3,7 +3,6 @@
 namespace Welp\BatchBundle\Api\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -28,6 +27,8 @@ class BatchController extends FOSRestController
     *   }
     * )
     * @Rest\QueryParam(name="group", description="Name of the group of batches")
+    * @Rest\QueryParam(name="offset", description="offset (page number)")
+    * @Rest\QueryParam(name="limit", description="offset (number of result by page)")
     *
     * @param Request $request
     * @param int $id

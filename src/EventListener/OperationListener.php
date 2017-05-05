@@ -90,6 +90,7 @@ class OperationListener implements EventSubscriberInterface
     public function errorOperation(BatchErrorEvent $event)
     {
         $batch = $event->getBatch();
+
         $temp = array(
             'error'=>$event->getError(),
             'operationId'=> $event->getOperationId()

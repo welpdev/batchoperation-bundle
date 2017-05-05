@@ -90,10 +90,24 @@ class BatchManager implements BaseManager
 
     public function findBy(array $params)
     {
+        //check for pagination
+        if (!isset($params['offset'])) {
+            $params['offset'] =1;
+        }
+
+        if (!isset($params['limit'])) {
+            $params['limit'] =10;
+        }
+        $offset = $params['offset'];
+        $limit = $params['limit'];
+
+        unset($params['offset']);
+        unset($params['limit']);
+
         if (key_exists('group', $params) && $params['group'] != null) {
-            $batches = $this->repository->findBy($params);
+            $batches = $this->repository->findBy($params, null, $limit, $offset);
         } else {
-            $batches = $this->repository->findAll();
+            $batches = $this->repository->findBy(array(), null, $limit, $offset);
         }
 
 
@@ -107,7 +121,6 @@ class BatchManager implements BaseManager
     {
         $entity->setUpdatedAt(new \DateTime());
         //dump($entity);die();
-        $this->entityManager->persist($entity);
         $this->entityManager->flush();
 
         return $entity;
@@ -118,16 +131,15 @@ class BatchManager implements BaseManager
         $this->entityManager->getConnection()->beginTransaction();
         try {
             $test = $this->entityManager->find($this->class, $batch->getId(), LockMode::PESSIMISTIC_WRITE);
-            $batch->addExecutedOperations($message);
-            $this->entityManager->persist($batch);
+            $test->addExecutedOperations($message);
+            $this->entityManager->persist($test);
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
+            return $test;
         } catch (\Exception $ex) {
             $this->entityManager->getConnection()->rollback();
-            $this->addExecutedOperation($batch, $message);
+            return $this->addExecutedOperation($batch, $message);
         }
-
-        return $batch;
     }
 
     /**
