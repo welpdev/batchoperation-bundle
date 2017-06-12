@@ -121,12 +121,12 @@ class BatchManager implements BaseManager
     {
         $this->entityManager->getConnection()->beginTransaction();
         try {
-            $test = $this->entityManager->find($this->class, $entity->getId(), LockMode::PESSIMISTIC_WRITE);
-            $test->setUpdatedAt(new \DateTime());
-            $this->entityManager->persist($test);
+            ///$test = $this->entityManager->find($this->class, $entity->getId(), LockMode::PESSIMISTIC_WRITE);
+            //$test = $entity;
+            $entity->setUpdatedAt(new \DateTime());
             $this->entityManager->flush();
             $this->entityManager->getConnection()->commit();
-            return $test;
+            return $entity;
         } catch (\Exception $ex) {
             $this->entityManager->getConnection()->rollback();
             return $this->update($entity);
@@ -146,6 +146,22 @@ class BatchManager implements BaseManager
         } catch (\Exception $ex) {
             $this->entityManager->getConnection()->rollback();
             return $this->addExecutedOperation($batch, $message);
+        }
+    }
+
+    public function addError($batch, $error)
+    {
+        $this->entityManager->getConnection()->beginTransaction();
+        try {
+            $test = $this->entityManager->find($this->class, $batch->getId(), LockMode::PESSIMISTIC_WRITE);
+            $test->adderror($error);
+            $this->entityManager->persist($test);
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+            return $test;
+        } catch (\Exception $ex) {
+            $this->entityManager->getConnection()->rollback();
+            return $this->addExecutedOperation($batch, $error);
         }
     }
 
