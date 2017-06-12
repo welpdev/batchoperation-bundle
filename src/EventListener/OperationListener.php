@@ -114,7 +114,12 @@ class OperationListener implements EventSubscriberInterface
         $totalExecutedOperations = count($batch->getExecutedOperations());
 
         if ($totalOperations <= $totalExecutedOperations) { //all operations have been executed
-            $batch->setStatus(Batch::STATUS_FINISHED);
+            if (count($batch->getErrors())) {
+                $batch->setStatus(Batch::STATUS_ERROR);
+            } else {
+                $batch->setStatus(Batch::STATUS_FINISHED);
+            }
+
             $batch->setFinishedAt(new \DateTime());
             $this->batchManager->update($batch);
             //write the responses to a file

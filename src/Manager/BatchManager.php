@@ -119,11 +119,18 @@ class BatchManager implements BaseManager
      */
     public function update($entity)
     {
-        $entity->setUpdatedAt(new \DateTime());
-        //dump($entity);die();
-        $this->entityManager->flush();
-
-        return $entity;
+        $this->entityManager->getConnection()->beginTransaction();
+        try {
+            $test = $this->entityManager->find($this->class, $entity->getId(), LockMode::PESSIMISTIC_WRITE);
+            $test->setUpdatedAt(new \DateTime());
+            $this->entityManager->persist($test);
+            $this->entityManager->flush();
+            $this->entityManager->getConnection()->commit();
+            return $test;
+        } catch (\Exception $ex) {
+            $this->entityManager->getConnection()->rollback();
+            return $this->update($entity);
+        }
     }
 
     public function addExecutedOperation($batch, $message)

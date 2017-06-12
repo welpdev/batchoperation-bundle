@@ -130,7 +130,7 @@ class RabbitMQConsumer implements ConsumerInterface
 
         if (!$form->isValid()) {
             $this->entityManager->clear();
-            throw new BatchException(400, 'Form Error, check yout payload', $batch);
+            throw new BatchException(400, 'Form Error, check your payload', $batch);
         }
 
         $this->entityManager->persist($entity);
